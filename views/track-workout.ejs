@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Track Workout</title>
+    <link rel="stylesheet" href="/styles.css">
+    <script defer src="/general.js"></script>
+    <script defer src="/track-workout.js"></script>
+</head>
+<body>
+
+    <!-- Persistent Top Bar -->
+    <nav class="navbar">
+        <div class="nav-left">
+            <span class="menu-icon">☰</span>
+            <h1 class="logo">ELEVATE</h1>
+        </div>
+    </nav>
+
+    <!-- Sidebar Menu -->
+    <div class="sidebar">
+        <button class="close-btn">✖</button>
+        <div class="profile-icon"></div>
+        <ul class="sidebar-menu">
+            <li><a href="/">Home</a></li>
+            <li><a href="/account">My Fitness</a></li>
+            <li><a href="/track-workout">Track Workout</a></li>
+            <li><a href="#">Social</a></li>
+            <li><a href="#">Weekly Challenge</a></li>
+            <li><a href="#">Gym Locator</a></li>
+            <li><a href="/logout">Logout</a></li>
+        </ul>
+        <div class="settings-icon">⚙️</div>
+    </div>
+
+    <div class="workout-container">
+        <!-- Left Panel: Calendar -->
+        <div class="workout-section">
+            <h2>CALENDAR</h2>
+            <div class="calendar-header">
+                <span id="prev-month">❮</span>
+                <span id="month-year">February 2025</span>
+                <span id="next-month">❯</span>
+            </div>
+            <div id="calendar"></div>
+            <button id="log-new-workout" class="btn hidden">Log New Workout</button>
+            <button id="view-logged-workout" class="btn hidden">View Workout</button>
+        </div>
+
+        <!-- Middle Panel: Add Exercise -->
+        <div class="workout-section" id="exercise-section">
+            <h2>ADD EXERCISE</h2>
+            <div id="exercise-list">
+                <% for (let group in exercises) { %>
+                <div class="muscle-group">
+                    <h3><%= group %> ▼</h3>
+                    <ul class="exercise-list hidden">
+                        <% exercises[group].forEach(ex => { %>
+                            <li data-id="<%= ex.exercise_id %>"><%= ex.name %></li>
+                        <% }); %>
+                    </ul>
+                </div>
+                <% } %>
+            </div>
+        </div>
+
+        <!-- Right Panel: Current Workout -->
+        <div class="workout-section">
+            <h2 id="workout-title">CURRENT WORKOUT</h2>
+            <div id="current-workout"></div>
+            <button id="complete-workout" class="btn hidden">Complete Workout</button>
+            <button id="delete-workout" class="btn hidden">Delete Workout</button> <!-- Ensure it's added -->
+        </div>
+
+</body>
+</html>
