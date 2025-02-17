@@ -185,57 +185,92 @@ app.get("/workouts/:date", isAuthenticated, (req, res) => {
     );
 });
 
-
-// ✅ Save a Workout Session
+// ✅ **Save a Workout & Update PRs**
 app.post("/workouts/save", isAuthenticated, (req, res) => {
     const { date, workout } = req.body;
     const userId = req.session.user.user_id;
 
-    console.log(`Saving workout for user ID: ${userId} on date: ${date}`);
-    console.log("Workout Data:", workout);
-
-    db.run("INSERT INTO workouts (user_id, workout_date) VALUES (?, ?) ON CONFLICT(user_id, workout_date) DO NOTHING", 
-        [userId, date], 
-        function (err) {
+    // Step 1: Insert workout if it does not already exist
+    db.run("INSERT INTO workouts (user_id, workout_date) VALUES (?, ?) ON CONFLICT(user_id, workout_date) DO NOTHING",
+        [userId, date], function (err) {
             if (err) {
-                console.error("Error inserting workout:", err);
+                console.error("❌ Error saving workout:", err);
                 return res.status(500).json({ message: "Error saving workout." });
             }
 
-            // Fetch the newly inserted or existing workout_id
+            // Step 2: Get the workout ID (fetch latest ID if already exists)
             db.get("SELECT workout_id FROM workouts WHERE user_id = ? AND workout_date = ?", 
-                [userId, date], 
-                (err, workoutEntry) => {
-                    if (err || !workoutEntry) {
-                        console.error("Error retrieving workout ID after insertion:", err);
-                        return res.status(500).json({ message: "Error retrieving workout ID." });
-                    }
+                [userId, date], (err, row) => {
+                if (err || !row) {
+                    console.error("❌ Error retrieving workout ID:", err);
+                    return res.status(500).json({ message: "Error retrieving workout." });
+                }
 
-                    console.log(`Workout saved with ID: ${workoutEntry.workout_id}`);
+                const workoutId = row.workout_id;
+                console.log("✅ Workout ID:", workoutId);
 
-                    // Insert exercises into workout_exercises table
-                    const insertExercises = workout.map(ex => {
-                        return new Promise((resolve, reject) => {
-                            db.run("INSERT INTO workout_exercises (workout_id, exercise_id, sets, reps, weight) VALUES (?, ?, ?, ?, ?)",
-                                [workoutEntry.workout_id, ex.exercise_id, ex.sets, ex.reps, ex.weight],
-                                err => err ? reject(err) : resolve()
-                            );
-                        });
+                // Step 3: Insert exercises into workout_exercises
+                const insertExercises = workout.map(ex => {
+                    return new Promise((resolve, reject) => {
+                        db.run("INSERT INTO workout_exercises (workout_id, exercise_id, sets, reps, weight) VALUES (?, ?, ?, ?, ?)",
+                            [workoutId, ex.exercise_id, ex.sets, ex.reps, ex.weight],
+                            err => err ? reject(err) : resolve()
+                        );
                     });
+                });
 
-                    Promise.all(insertExercises)
-                        .then(() => {
-                            console.log("Workout logged successfully!");
-                            res.json({ message: "Workout logged successfully!" });
-                        })
-                        .catch(err => {
-                            console.error("Error saving exercises:", err);
-                            res.status(500).json({ message: "Error saving exercises." });
-                        });
+                Promise.all(insertExercises)
+                    .then(() => {
+                        console.log("✅ Workout logged successfully!");
+                        
+                        // Step 4: Update PRs in personal_records
+                        updatePersonalRecords(userId, workout)
+                            .then(() => res.json({ message: "Workout logged and PRs updated!" }))
+                            .catch(err => {
+                                console.error("❌ Error updating PRs:", err);
+                                res.status(500).json({ message: "Workout saved, but PR update failed." });
+                            });
+                    })
+                    .catch(err => {
+                        console.error("❌ Error saving exercises:", err);
+                        res.status(500).json({ message: "Error saving exercises." });
+                    });
             });
         }
     );
 });
+
+// ✅ **Function to Update Personal Records (PRs)**
+function updatePersonalRecords(userId, workout) {
+    return new Promise((resolve, reject) => {
+        let queries = [];
+
+        workout.forEach(exercise => {
+            queries.push(new Promise((resolve, reject) => {
+                // Step 1: Check existing PR for this exercise
+                db.get("SELECT max_weight FROM personal_records WHERE user_id = ? AND exercise_id = ?", 
+                    [userId, exercise.exercise_id], (err, row) => {
+                    if (err) return reject(err);
+
+                    if (!row || parseFloat(exercise.weight) > parseFloat(row.max_weight)) {
+                        // Step 2: If no record exists OR weight is higher, update PR
+                        db.run("INSERT INTO personal_records (user_id, exercise_id, max_weight, max_reps, achieved_date) VALUES (?, ?, ?, ?, ?) ON CONFLICT(user_id, exercise_id) DO UPDATE SET max_weight = ?, max_reps = ?, achieved_date = ?",
+                            [userId, exercise.exercise_id, exercise.weight, exercise.reps, new Date().toISOString().split("T")[0], 
+                             exercise.weight, exercise.reps, new Date().toISOString().split("T")[0]],
+                            err => err ? reject(err) : resolve()
+                        );
+
+                        console.log(`🏆 **New PR Logged for Exercise ID ${exercise.exercise_id}! Weight: ${exercise.weight}kg**`);
+                    } else {
+                        resolve(); // No PR update needed
+                    }
+                });
+            }));
+        });
+
+        Promise.all(queries).then(() => resolve()).catch(err => reject(err));
+    });
+}
 
 app.delete("/workouts/delete/:date", isAuthenticated, (req, res) => {
     const { date } = req.params;
