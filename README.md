@@ -11,8 +11,10 @@
 
 ## Step 2: run npm build-db or build-db-win (depends on OS)
 
-## Step 3: go to localhost:3000 to start
+## Step 3: run npm start
 
-## Step 4: Create organisers & attendees using register page (Eg. username: admin  password: Admin123! AND username:user  password: User123!)
+## Step 4: go to localhost:3000 to start
+
+## Step 5: Create organisers & attendees using register page (Eg. username: admin  password: Admin123! AND username:user  password: User123!)
 
 
