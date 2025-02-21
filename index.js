@@ -375,5 +375,9 @@ app.post("/account/update", isAuthenticated, (req, res) => {
     );
 });
 
+app.get("/gymlocator", (req, res) => {
+    res.render("gymlocator", { user: req.session.user });
+});
+
 // ✅ Start Server
 app.listen(3000, () => console.log("🚀 Server running on port 3000"));
