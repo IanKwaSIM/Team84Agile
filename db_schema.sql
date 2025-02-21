@@ -13,7 +13,7 @@ CREATE TABLE users (
     age            INT,
     height_cm      DECIMAL(5,2) CHECK (height_cm > 0),
     weight_kg      DECIMAL(5,2) CHECK (weight_kg > 0),
-    bmi            DECIMAL(5,2) GENERATED ALWAYS AS (weight_kg / ((height_cm / 100) * (height_cm / 100))) STORED,
+    bmi            DECIMAL(5,2) DEFAULT NULL,
     goals          TEXT,
     created_at     TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );

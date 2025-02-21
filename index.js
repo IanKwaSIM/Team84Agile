@@ -352,18 +352,33 @@ app.get("/account", isAuthenticated, (req, res) => {
     );
 });
 
-// ✅ Route: Update User Profile Information
 app.post("/account/update", isAuthenticated, (req, res) => {
     const { phone, country, city, address, postal_code, height, weight, age, goals, occupation } = req.body;
     const userId = req.session.user.user_id;
 
+    // ✅ Convert height and weight to numbers for BMI Calculation
+    const heightNum = parseFloat(height);
+    const weightNum = parseFloat(weight);
+    let bmi = null;
+
+    // ✅ Calculate BMI if height and weight are valid numbers
+    if (!isNaN(heightNum) && heightNum > 0 && !isNaN(weightNum) && weightNum > 0) {
+        bmi = (weightNum / ((heightNum / 100) * (heightNum / 100))).toFixed(2);
+    }
+
+    console.log(`Updating user ${userId} with BMI: ${bmi}`); // Debugging log
+
+    // ✅ Update user profile in the database, including BMI
     db.run(`
         UPDATE users SET phone = ?, country = ?, city = ?, address = ?, postal_code = ?,
-                         height_cm = ?, weight_kg = ?, age = ?, goals = ?, occupation = ?
+                         height_cm = ?, weight_kg = ?, bmi = ?, age = ?, goals = ?, occupation = ?
         WHERE user_id = ?`,
-        [phone, country, city, address, postal_code, height, weight, age, goals, occupation, userId],
+        [phone, country, city, address, postal_code, heightNum, weightNum, bmi, age, goals, occupation, userId],
         (err) => {
-            if (err) return res.status(500).json({ message: "Error updating account details" });
+            if (err) {
+                console.error("Error updating account details:", err);
+                return res.status(500).json({ message: "Error updating account details" });
+            }
 
             // ✅ After updating, refresh the session with new user data
             db.get("SELECT * FROM users WHERE user_id = ?", [userId], (err, updatedUser) => {
