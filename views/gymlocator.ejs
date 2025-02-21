@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home</title>
+    <link rel="stylesheet" href="/styles.css">
+    <script defer src="/general.js"></script>
+    <script defer src="/gymlocator.js"></script>
+</head>
+<body>
+
+    <!-- Persistent Top Bar -->
+    <nav class="navbar">
+    <div class="nav-left">
+        <span class="menu-icon">☰</span>
+        <h1 class="logo">ELEVATE</h1>
+    </div>
+    </nav>
+
+    <!-- Sidebar Menu -->
+    <div class="sidebar">
+    <button class="close-btn">✖</button>
+    <ul class="sidebar-menu">
+        <% if (user) { %>
+            <li><a href="/">Home</a></li>
+            <li><a href="/account">My Fitness</a></li>
+            <li><a href="/track-workout">Track Workout</a></li>
+            <li><a href="#">Social</a></li>
+            <li><a href="#">Weekly Challenge</a></li>
+            <li><a href="/gymlocator">Gym Locator</a></li>
+            <li><a href="/logout">Logout</a></li>
+        <% } %>
+    </ul>
+        <div class="settings-icon">⚙️</div>
+    </div>
+    
+    <div class="container">
+        <h2>Find a Gym Near You</h2>
+        <input type="text" id="location-input" placeholder="Enter a location">
+        <button onclick="searchLocation()">Search</button>
+        <div id="map"></div>
+
+        <!-- 📍 New: Gym List Section -->
+        <h3>Nearby Gyms</h3>
+        <ul id="gym-list"></ul>
+    </div>
+
+    <script>
+        function initAutocomplete() {
+            let input = document.getElementById("location-input");
+            let autocomplete = new google.maps.places.Autocomplete(input);
+            autocomplete.setFields(["geometry", "name", "formatted_address"]);
+            autocomplete.addListener("place_changed", () => {
+                let place = autocomplete.getPlace();
+                if (!place.geometry) {
+                    alert("❌ No details found for: " + place.name);
+                    return;
+                }
+                map.setCenter(place.geometry.location);
+                map.setZoom(14);
+                createMarker(place);
+            });
+        }
+    </script>
+    
+    <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBXW1lY6EDrjIG3vd1L86ymIN9YKH7_ml4&libraries=places&callback=initMap&loading=async"></script>
+
+</body>
+</html>
