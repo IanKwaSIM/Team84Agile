@@ -316,13 +316,18 @@ body {
 /* yz changes */
 /* for login/home page */
 .auth-container {
-    width: 350px;
-    margin: 50px auto;
+    width: 400px;
     padding: 30px;
     background: white;
     border-radius: 10px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
     text-align: center;
+
+    /* Centering */
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
 }
 
 .input-group {
@@ -359,7 +364,29 @@ body {
 .toggle-link:hover {
     text-decoration: underline;
 }
+
+.intro-text {
+    text-align: center;
+    margin: 100px auto;
+    max-width: 800px;
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #333;
+}
 /* for login/home page end */
+
+body::before {
+    content: "ELEVATE";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 420px; /* Adjust for desired size */
+    font-weight: bold;
+    color: rgba(0, 0, 0, 0.1); /* Light gray, adjust opacity */
+    z-index: -1; /* Sends it to the background */
+    white-space: nowrap; /* Prevents text from wrapping */
+}
 
 /* for accounts page */
 .profile-container {

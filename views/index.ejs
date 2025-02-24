@@ -1,77 +1,88 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Home</title>
-    <link rel="stylesheet" href="/styles.css">
+    <link rel="stylesheet" href="/styles.css" />
     <script defer src="/general.js"></script>
-    <script defer src="/auth.js"></script> <!-- Added auth.js for login/register handling -->
-</head>
-<body>
-
+    <script defer src="/auth.js"></script>
+    <!-- Added auth.js for login/register handling -->
+  </head>
+  <body>
     <!-- Persistent Top Bar -->
     <nav class="navbar">
-        <div class="nav-left">
-            <span class="menu-icon">☰</span>
-            <h1 class="logo">ELEVATE</h1>
-        </div>
+      <div class="nav-left">
+        <span class="menu-icon">☰</span>
+        <h1 class="logo">ELEVATE</h1>
+      </div>
     </nav>
 
     <!-- Sidebar Menu -->
     <div class="sidebar">
-        <button class="close-btn">✖</button>
-        <ul class="sidebar-menu">
-            <% if (user) { %>
-                <li><a href="/">Home</a></li>
-                <li><a href="/account">My Fitness</a></li>
-                <li><a href="/track-workout">Track Workout</a></li>
-                <li><a href="#">Social</a></li>
-                <li><a href="#">Weekly Challenge</a></li>
-                <li><a href="/gymlocator">Gym Locator</a></li>
-                <li><a href="/logout">Logout</a></li>
-            <% } %>
-        </ul>
-        <div class="settings-icon">⚙️</div>
+      <button class="close-btn">✖</button>
+      <ul class="sidebar-menu">
+        <% if (user) { %>
+        <li><a href="/">Home</a></li>
+        <li><a href="/account">My Fitness</a></li>
+        <li><a href="/track-workout">Track Workout</a></li>
+        <li><a href="#">Social</a></li>
+        <li><a href="#">Weekly Challenge</a></li>
+        <li><a href="/gymlocator">Gym Locator</a></li>
+        <li><a href="/logout">Logout</a></li>
+        <% } %>
+      </ul>
+      <div class="settings-icon">⚙️</div>
+    </div>
+
+    <div class="intro-text">
+        <h1>Welcome to Elevate!</h1>
+        <p>Join us today and start your fitness journey with a supportive community. Stay motivated, track your progress, and achieve your goals together!</p>
     </div>
 
     <div class="container">
-        <% if (user) { %>
-            <h1>Welcome, <%= user.username %>!</h1>
-            <p>Explore the app using the navigation menu.</p>
-        <% } else { %>
-            <div class="auth-container">
-                <!-- Login Form -->
-                <form id="login-form" method="POST" action="/login">
-                    <h2>Login</h2>
-                    <div class="input-group">
-                        <label for="email">Email:</label>
-                        <input
-                          type="email"
-                          id="email"
-                          name="email"
-                          placeholder="Enter your email"
-                          required
-                        />
-                      </div>
-                      <div class="input-group">
-                        <label for="password">Password:</label>
-                        <input
-                          type="password"
-                          id="password"
-                          name="password"
-                          placeholder="Enter your password"
-                          required
-                        />
-                      </div>
-                      <button type="submit" class="btn">Login</button>
-                    </form>
-                    <a href="#" id="toggle-to-register" class="toggle-link">Don't have an account? Register</a>
-            
+      <% if (user) { %>
+      <h1>Welcome, <%= user.username %>!</h1>
+      <p>Explore the app using the navigation menu.</p>
+      <% } else { %>
+      <div class="auth-container">
+        <!-- Login Form -->
+        <form id="login-form" method="POST" action="/login">
+          <!-- <h2>Login</h2> -->
+          <div class="input-group">
+            <label for="email">Email:</label>
+            <input
+              type="email"
+              id="email"
+              name="email"
+              placeholder="Enter your email"
+              required
+            />
+          </div>
+          <div class="input-group">
+            <label for="password">Password:</label>
+            <input
+              type="password"
+              id="password"
+              name="password"
+              placeholder="Enter your password"
+              required
+            />
+          </div>
+          <button type="submit" class="btn">Login</button>
+        </form>
+        <a href="#" id="toggle-to-register" class="toggle-link"
+          >Don't have an account? Register</a
+        >
 
-                <!-- Register Form -->
-                <form id="register-form" method="POST" action="/register" style="display: none;">
-                    <h2>Register</h2>
+        <!-- Register Form -->
+        <form
+          id="register-form"
+          method="POST"
+          action="/register"
+          style="display: none"
+        >
+          <h2>Register</h2>
           <div class="input-group">
             <label for="username">Username:</label>
             <input
@@ -101,12 +112,15 @@
           </div>
           <button type="submit" class="btn">Register</button>
         </form>
-        <a href="#" id="toggle-to-login" style="display: none" class="toggle-link"
+        <a
+          href="#"
+          id="toggle-to-login"
+          style="display: none"
+          class="toggle-link"
           >Already have an account? Login</a
         >
-            </div>
-        <% } %>
+      </div>
+      <% } %>
     </div>
-
-</body>
+  </body>
 </html>
