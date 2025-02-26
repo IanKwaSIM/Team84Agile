@@ -420,3 +420,26 @@ input, select {
     border-radius: 5px;
 }
 /* for accounts page end */
+
+/* for challenge page */
+.challenge-container {
+    text-align: center;
+    background: white;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    width: 400px;
+    margin: 50px auto;
+
+    /* Centering */
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.challenge-text {
+    font-size: 1.2rem;
+    font-weight: bold;
+    color: #333;
+}
