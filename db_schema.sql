@@ -141,3 +141,33 @@ INSERT INTO exercises (name, muscle_group, equipment) VALUES
     ('Boxing', 'Cardio', 'Punching Bag'),
     ('High Knees', 'Cardio', 'Bodyweight'),
     ('Burpees', 'Cardio', 'Bodyweight');
+
+-- Create Challenges Table
+CREATE TABLE challenges (
+    challenge_id INTEGER PRIMARY KEY AUTOINCREMENT,
+    challenge_text TEXT NOT NULL,
+    start_date DATE NOT NULL,  -- The Monday of the challenge week
+    end_date DATE NOT NULL     -- The Sunday of the challenge week
+);
+
+-- Populate Challenges Table
+INSERT INTO challenges (challenge_text, start_date, end_date) VALUES
+    ('Complete 100 push-ups every day!!! 💪', '2025-02-26', '2025-03-03'),
+    ('Run 10km by the end of the week! 🏃', '2025-03-04', '2025-03-10'),
+    ('Drink 3L of water daily! 💧', '2025-03-11', '2025-03-17'),
+    ('Try a new yoga pose every day! 🧘', '2025-03-18', '2025-03-24');
+
+-- Create Leaderboard Table
+CREATE TABLE leaderboard (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    username TEXT NOT NULL,
+    points INTEGER NOT NULL DEFAULT 0
+);
+
+-- Populate Leaderboard Table with dummy data
+INSERT INTO leaderboard (username, points) VALUES
+    ('Alice', 1200),
+    ('Bob', 950),
+    ('Charlie', 800),
+    ('Dave', 700),
+    ('Eve', 650);

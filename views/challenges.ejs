@@ -36,8 +36,19 @@
 
     <!-- views/challenges.ejs -->
     <div class="challenge-container">
-      <h2>Weekly Challenge</h2>
-      <p class="challenge-text"><%= challenges %></p>
-    </div>
+      <!-- Main Challenge Section (Centered) -->
+      <main class="challenge-section">
+          <h1>Current Weekly Challenge</h1>
+          <p class="challenge-text">Loading challenge...</p>
+      </main>
+
+      <!-- Leaderboard Section (Right Side) -->
+      <aside class="leaderboard">
+          <h2>Leaderboard 🏆</h2>
+          <ul id="leaderboard-list">
+              <li>Loading...</li>
+          </ul>
+      </aside>
+  </div>
   </body>
 </html>

@@ -3,6 +3,7 @@ document.addEventListener("DOMContentLoaded", function () {
     const menuIcon = document.querySelector(".menu-icon");
     const sidebar = document.querySelector(".sidebar");
     const closeBtn = document.querySelector(".close-btn");
+    const overlay = document.querySelector(".overlay");
 
     // Login & Register Elements
     const toggleToLogin = document.getElementById("toggle-to-login");
@@ -26,10 +27,33 @@ document.addEventListener("DOMContentLoaded", function () {
     window.addEventListener("resize", adjustPadding);
 
     // ✅ Sidebar Toggle
-    if (menuIcon && sidebar && closeBtn) {
-        menuIcon.addEventListener("click", () => sidebar.classList.add("open"));
-        closeBtn.addEventListener("click", () => sidebar.classList.remove("open"));
+    // if (menuIcon && sidebar && closeBtn) {
+    //     menuIcon.addEventListener("click", () => sidebar.classList.add("open"));
+    //     closeBtn.addEventListener("click", () => sidebar.classList.remove("open"));
+    // }
+
+    // Function to toggle sidebar visibility
+    function toggleSidebar() {
+        sidebar.classList.toggle("open");
     }
+
+    // Open sidebar when menu icon is clicked
+    menuIcon.addEventListener("click", function (event) {
+        event.stopPropagation(); // Prevent click from propagating to document
+        toggleSidebar();
+    });
+
+    // Close sidebar when close button is clicked
+    closeBtn.addEventListener("click", function () {
+        sidebar.classList.remove("open");
+    });
+
+    // Close sidebar when clicking outside of it
+    document.addEventListener("click", function (event) {
+        if (!sidebar.contains(event.target) && !menuIcon.contains(event.target)) {
+            sidebar.classList.remove("open");
+        }
+    });
 
     // ✅ Login & Register Toggle
     if (toggleToLogin && toggleToRegister) {

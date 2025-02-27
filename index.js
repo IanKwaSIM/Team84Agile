@@ -394,5 +394,54 @@ app.get("/gymlocator", (req, res) => {
     res.render("gymlocator", { user: req.session.user });
 });
 
+// ✅ Route to Fetch and Render Weekly Challenge
+app.get("/challenges", isAuthenticated, (req, res) => {
+    const today = new Date().toISOString().split("T")[0]; // Get today's date in YYYY-MM-DD format
+
+    db.get("SELECT challenge_text FROM challenges WHERE start_date <= ? AND end_date >= ?", 
+        [today, today], 
+        (err, challenge) => {
+            if (err) {
+                console.error("❌ Database error:", err);
+                return res.status(500).send("Error fetching challenge.");
+            }
+
+            res.render("challenges", { 
+                user: req.session.user,
+                challenges: challenge ? challenge.challenge_text : "No challenge for this week!"
+            });
+        }
+    );
+});
+
+// Route to get the current challenge
+app.get("/challenges/current", (req, res) => {
+    const today = new Date().toISOString().split("T")[0];
+
+    db.get("SELECT challenge_text FROM challenges WHERE start_date <= ? AND end_date >= ?", [today, today], (err, row) => {
+        if (err) {
+            console.error("❌ Error fetching current challenge:", err);
+            return res.status(500).json({ error: "Database error" });
+        }
+        res.json(row || { challenge_text: "No challenge available this week!" });
+    });
+});
+
+// Route to get leaderboard data
+app.get("/leaderboard", (req, res) => {
+    db.all(
+        "SELECT username, points FROM leaderboard ORDER BY points DESC LIMIT 10",
+        [],
+        (err, rows) => {
+            if (err) {
+                console.error("Database error:", err);
+                return res.status(500).json({ error: "Internal Server Error" });
+            }
+
+            res.json(rows);
+        }
+    );
+});
+
 // ✅ Start Server
 app.listen(3000, () => console.log("🚀 Server running on port 3000"));
