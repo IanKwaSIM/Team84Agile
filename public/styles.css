@@ -80,7 +80,7 @@ body {
     z-index: 998; /* Ensure it is above other elements but below the sidebar and nav bar*/
 }
 
-/* Show overlay when sidebar is open */
+/* Show overlay when sidebar is open (mainly for gymlocator page) */
 .sidebar.open + .overlay {
     display: block;
 }
