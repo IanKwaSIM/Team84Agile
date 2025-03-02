@@ -3,7 +3,7 @@ document.addEventListener("DOMContentLoaded", function () {
     const pastWorkoutsSection = document.getElementById("past-workouts");
     const pastWorkoutsList = document.getElementById("past-workouts-list");
 
-    // ✅ **Expand/Collapse Muscle Groups**
+    //  **Expand/Collapse Muscle Groups**
     muscleGroups.forEach(group => {
         group.addEventListener("click", function () {
             const exerciseList = this.nextElementSibling;
@@ -11,7 +11,7 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     });
 
-    // ✅ **Fetch and Display Past Workout Records**
+    //  **Fetch and Display Past Workout Records**
     function fetchPastWorkouts() {
         fetch("/account/past-workouts")
             .then(response => response.json())
@@ -34,6 +34,6 @@ document.addEventListener("DOMContentLoaded", function () {
             .catch(error => console.error("Error fetching past workouts:", error));
     }
 
-    // ✅ **Initialize Data Fetching**
+    //  **Initialize Data Fetching**
     fetchPastWorkouts();
 });

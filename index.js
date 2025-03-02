@@ -21,7 +21,7 @@ app.use(session({ secret: "secret-key", resave: false, saveUninitialized: true }
 app.set("view engine", "ejs");
 app.use(express.static(path.join(__dirname, "public")));
 
-// ✅ Middleware to check authentication
+// Middleware to check authentication
 function isAuthenticated(req, res, next) {
     if (!req.session.user) {
         return res.redirect("/");
@@ -29,19 +29,19 @@ function isAuthenticated(req, res, next) {
     next();
 }
 
-// ✅ Home/Login Page
+// Home Page
 app.get("/", (req, res) => {
     const user = req.session.user || null;
     res.render("index", { user });
 });
 
-// ✅ Register Route (Hashes password before saving)
+//  Register Route (Hashes password before saving)
 app.post("/register", (req, res) => {
     const { username, email, password } = req.body;
 
     bcrypt.hash(password, 10, (err, hashedPassword) => {
         if (err) {
-            console.error("❌ Error hashing password:", err);
+            console.error(" Error hashing password:", err);
             return res.redirect("/?error=Registration failed");
         }
 
@@ -50,15 +50,15 @@ app.post("/register", (req, res) => {
             [username, email, hashedPassword],
             function (err) {
                 if (err) {
-                    console.error("❌ Error inserting user:", err);
+                    console.error(" Error inserting user:", err);
                     return res.redirect("/?error=Registration failed");
                 }
                 
-                // ✅ Retrieve new user_id after insertion
+                // Retrieve new user_id after insertion
                 const userId = this.lastID; // Gets the auto-incremented ID
                 
                 req.session.user = { user_id: userId, username, email };
-                console.log(`✅ Registered User: ${username} (User ID: ${userId})`);
+                console.log(`Registered User: ${username} (User ID: ${userId})`);
                 
                 res.redirect("/");
             }
@@ -66,47 +66,47 @@ app.post("/register", (req, res) => {
     });
 });
 
-// ✅ Login Route (Fetches `user_id`)
+//  Login Route 
 app.post("/login", (req, res) => {
     const { email, password } = req.body;
 
     db.get("SELECT * FROM users WHERE email = ?", [email], (err, user) => {
         if (err) {
-            console.error("❌ Database error:", err);
+            console.error(" Database error:", err);
             return res.redirect("/");
         }
 
         if (!user) {
-            console.log("⚠️ Invalid login attempt (User not found):", email);
+            console.log(" Invalid login attempt (User not found):", email);
             return res.redirect("/?error=Invalid credentials");
         }
 
         bcrypt.compare(password, user.password_hash, (err, result) => {
             if (result) {
                 req.session.user = { user_id: user.user_id, username: user.username, email: user.email };
-                console.log(`✅ User logged in: ${user.username} (User ID: ${user.user_id})`);
+                console.log(` User logged in: ${user.username} (User ID: ${user.user_id})`);
                 res.redirect("/");
             } else {
-                console.log("⚠️ Invalid login attempt (Wrong password):", email);
+                console.log(" Invalid login attempt (Wrong password):", email);
                 res.redirect("/?error=Invalid credentials");
             }
         });
     });
 });
 
-// ✅ Logout Route
+//  Logout Route
 app.get("/logout", (req, res) => {
-    console.log(`👋 User logged out: ${req.session.user?.username || "Unknown User"}`);
+    console.log(` User logged out: ${req.session.user?.username || "Unknown User"}`);
     req.session.destroy(() => {
         res.redirect("/");
     });
 });
 
-// ✅ Track Workout Page
+//  Track Workout Page
 app.get("/track-workout", isAuthenticated, (req, res) => {
     db.all("SELECT * FROM exercises", [], (err, rows) => {
         if (err) {
-            console.error("❌ Error fetching exercises:", err);
+            console.error(" Error fetching exercises:", err);
             return res.sendStatus(500);
         }
 
@@ -123,30 +123,30 @@ app.get("/track-workout", isAuthenticated, (req, res) => {
     });
 });
 
-// ✅ Get Workout Dates for Calendar (Uses `user_id`)
+//  Get Workout Dates for Calendar 
 app.get("/workouts/dates", isAuthenticated, (req, res) => {
-    const userId = req.session.user.user_id; // Fetch the logged-in user's `user_id`
+    const userId = req.session.user.user_id; 
 
-    console.log(`🔍 Fetching workouts for user_id: ${userId}`);
+    console.log(` Fetching workouts for user_id: ${userId}`);
     
     db.all("SELECT workout_date FROM workouts WHERE user_id = ?", [userId], (err, rows) => {
         if (err) {
-            console.error("❌ Database error fetching workout dates:", err);
+            console.error(" Database error fetching workout dates:", err);
             return res.status(500).json({ error: "Database error" });
         }
 
         if (rows.length === 0) {
-            console.log("⚠️ No workouts found in the database for user:", userId);
+            console.log(" No workouts found in the database for user:", userId);
             return res.json([]); // No workouts yet
         }
 
         const workoutDates = rows.map(row => row.workout_date);
-        console.log("✅ Retrieved workout dates from DB:", workoutDates); // Debugging log
+        console.log(" Retrieved workout dates from DB:", workoutDates); // Debugging log
         res.json(workoutDates);
     });
 });
 
-// ✅ Get Specific Workout Data
+//  Get Specific Workout Data
 app.get("/workouts/:date", isAuthenticated, (req, res) => {
     const { date } = req.params;
     const userId = req.session.user.user_id;
@@ -191,7 +191,7 @@ app.get("/workouts/:date", isAuthenticated, (req, res) => {
     );
 });
 
-// ✅ **Save a Workout & Update PRs**
+//  Save a Workout & Update PRs
 app.post("/workouts/save", isAuthenticated, (req, res) => {
     const { date, workout } = req.body;
     const userId = req.session.user.user_id;
@@ -200,7 +200,7 @@ app.post("/workouts/save", isAuthenticated, (req, res) => {
     db.run("INSERT INTO workouts (user_id, workout_date) VALUES (?, ?) ON CONFLICT(user_id, workout_date) DO NOTHING",
         [userId, date], function (err) {
             if (err) {
-                console.error("❌ Error saving workout:", err);
+                console.error(" Error saving workout:", err);
                 return res.status(500).json({ message: "Error saving workout." });
             }
 
@@ -208,12 +208,12 @@ app.post("/workouts/save", isAuthenticated, (req, res) => {
             db.get("SELECT workout_id FROM workouts WHERE user_id = ? AND workout_date = ?", 
                 [userId, date], (err, row) => {
                 if (err || !row) {
-                    console.error("❌ Error retrieving workout ID:", err);
+                    console.error(" Error retrieving workout ID:", err);
                     return res.status(500).json({ message: "Error retrieving workout." });
                 }
 
                 const workoutId = row.workout_id;
-                console.log("✅ Workout ID:", workoutId);
+                console.log(" Workout ID:", workoutId);
 
                 // Step 3: Insert exercises into workout_exercises
                 const insertExercises = workout.map(ex => {
@@ -227,18 +227,18 @@ app.post("/workouts/save", isAuthenticated, (req, res) => {
 
                 Promise.all(insertExercises)
                     .then(() => {
-                        console.log("✅ Workout logged successfully!");
+                        console.log(" Workout logged successfully!");
                         
                         // Step 4: Update PRs in personal_records
                         updatePersonalRecords(userId, workout)
                             .then(() => res.json({ message: "Workout logged and PRs updated!" }))
                             .catch(err => {
-                                console.error("❌ Error updating PRs:", err);
+                                console.error(" Error updating PRs:", err);
                                 res.status(500).json({ message: "Workout saved, but PR update failed." });
                             });
                     })
                     .catch(err => {
-                        console.error("❌ Error saving exercises:", err);
+                        console.error(" Error saving exercises:", err);
                         res.status(500).json({ message: "Error saving exercises." });
                     });
             });
@@ -246,7 +246,7 @@ app.post("/workouts/save", isAuthenticated, (req, res) => {
     );
 });
 
-// ✅ **Function to Update Personal Records (PRs)**
+//  Function to Update Personal Records (PRs)
 function updatePersonalRecords(userId, workout) {
     return new Promise((resolve, reject) => {
         let queries = [];
@@ -266,7 +266,7 @@ function updatePersonalRecords(userId, workout) {
                             err => err ? reject(err) : resolve()
                         );
 
-                        console.log(`🏆 **New PR Logged for Exercise ID ${exercise.exercise_id}! Weight: ${exercise.weight}kg**`);
+                        console.log(` New PR Logged for Exercise ID ${exercise.exercise_id}! Weight: ${exercise.weight}kg`);
                     } else {
                         resolve(); // No PR update needed
                     }
@@ -317,11 +317,11 @@ app.delete("/workouts/delete/:date", isAuthenticated, (req, res) => {
     );
 });
 
-// ✅ Route: User Account Page with Profile & PR Retrieval
+//  Route: User Account Page with Profile & PR Retrieval
 app.get("/account", isAuthenticated, (req, res) => {
     const userId = req.session.user.user_id;
 
-    // ✅ Retrieve User Profile Data
+    //  Retrieve User Profile Data
     db.get(`
         SELECT username, email, phone, country, city, address, postal_code, 
                height_cm, weight_kg, bmi, age, goals, occupation
@@ -330,7 +330,7 @@ app.get("/account", isAuthenticated, (req, res) => {
             if (!user) return res.redirect("/");
             if (err) return res.send("Error retrieving user profile data.");
 
-            // ✅ Retrieve Personal Records (PRs)
+            //  Retrieve Personal Records (PRs)
             db.all(`
                 SELECT exercises.name AS exercise_name, exercises.muscle_group, 
                        personal_records.max_weight, personal_records.max_reps, 
@@ -342,7 +342,7 @@ app.get("/account", isAuthenticated, (req, res) => {
                 [userId], (err, personalRecords) => {
                     if (err) return res.send("Error retrieving personal records.");
                     
-                    // ✅ Group PRs by muscle group
+                    //  Group PRs by muscle group
                     let groupedPRs = {};
                     personalRecords.forEach(record => {
                         if (!groupedPRs[record.muscle_group]) {
@@ -362,19 +362,19 @@ app.post("/account/update", isAuthenticated, (req, res) => {
     const { phone, country, city, address, postal_code, height, weight, age, goals, occupation } = req.body;
     const userId = req.session.user.user_id;
 
-    // ✅ Convert height and weight to numbers for BMI Calculation
+    //  Convert height and weight to numbers for BMI Calculation
     const heightNum = parseFloat(height);
     const weightNum = parseFloat(weight);
     let bmi = null;
 
-    // ✅ Calculate BMI if height and weight are valid numbers
+    //  Calculate BMI if height and weight are valid numbers
     if (!isNaN(heightNum) && heightNum > 0 && !isNaN(weightNum) && weightNum > 0) {
         bmi = (weightNum / ((heightNum / 100) * (heightNum / 100))).toFixed(2);
     }
 
     console.log(`Updating user ${userId} with BMI: ${bmi}`); // Debugging log
 
-    // ✅ Update user profile in the database, including BMI
+    //  Update user profile in the database, including BMI
     db.run(`
         UPDATE users SET phone = ?, country = ?, city = ?, address = ?, postal_code = ?,
                          height_cm = ?, weight_kg = ?, bmi = ?, age = ?, goals = ?, occupation = ?
@@ -386,7 +386,7 @@ app.post("/account/update", isAuthenticated, (req, res) => {
                 return res.status(500).json({ message: "Error updating account details" });
             }
 
-            // ✅ After updating, refresh the session with new user data
+            //  After updating, refresh the session with new user data
             db.get("SELECT * FROM users WHERE user_id = ?", [userId], (err, updatedUser) => {
                 if (!updatedUser) return res.redirect("/");
                 req.session.user = updatedUser;
@@ -400,78 +400,66 @@ app.get("/gymlocator", (req, res) => {
     res.render("gymlocator", { user: req.session.user });
 });
 
-// ✅ View Social Hub Page
+//  View Social Hub Page
 app.get("/socials", isAuthenticated, (req, res) => {
     res.render("socials", { user: req.session.user });
 });
 
-// ✅ Retrieve Nearby Users Using Google Maps API & Postal Code
+//  Retrieve Nearby Users Using Google Maps API & Postal Code
 app.get("/socials/nearby-users", isAuthenticated, async (req, res) => {
     const userId = req.session.user.user_id;
+    const apiKey = "AIzaSyBXW1lY6EDrjIG3vd1L86ymIN9YKH7_ml4"; // Replace with actual API key
 
-    // ✅ Fetch user's postal code from the database
-    db.get("SELECT country, postal_code FROM users WHERE user_id = ?", [userId], async (err, user) => {
-        if (err || !user) {
-            console.error("Database error fetching user postal code:", err);
-            return res.status(500).json({ message: "Error fetching your postal code." });
+    db.get("SELECT postal_code, country FROM users WHERE user_id = ?", [userId], async (err, user) => {
+        if (err || !user || !user.postal_code || !user.country) {
+            return res.json({ message: "Please update your profile with a valid postal code and country." });
         }
-
-        if (!user.postal_code || !user.country) {
-            return res.status(400).json({ message: "Please update your profile with a postal code and country." });
-        }
-
-        console.log("User's postal code:", user.postal_code, "Country:", user.country);
-
-        const apiKey = "AIzaSyBXW1lY6EDrjIG3vd1L86ymIN9YKH7_ml4";
-        const userLocationQuery = `${user.postal_code}, ${user.country}`;
-        const geoUrl = `https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(userLocationQuery)}&key=${apiKey}`;
 
         try {
-            const geoResponse = await axios.get(geoUrl);
-            const userLocation = geoResponse.data.results[0]?.geometry.location;
+            // ✅ Get user's latitude & longitude
+            const userGeoResponse = await axios.get(`https://maps.googleapis.com/maps/api/geocode/json?address=${user.postal_code},${user.country}&key=${apiKey}`);
+            const userLocation = userGeoResponse.data.results[0]?.geometry.location;
 
-            if (!userLocation) {
-                console.error("Invalid postal code response:", geoResponse.data);
-                return res.status(400).json({ message: "Invalid postal code. Please check your profile." });
-            }
+            if (!userLocation) return res.json({ message: "Invalid postal code." });
 
-            console.log("User's Geolocation:", userLocation);
+            // ✅ Retrieve all other users' postal codes
+            db.all("SELECT user_id, username, postal_code, country, city FROM users WHERE user_id != ?", [userId], async (err, users) => {
+                if (err) return res.status(500).json({ message: "Error retrieving users." });
 
-            // ✅ Fetch all other users' postal codes
-            db.all("SELECT user_id, username, city, country, postal_code FROM users WHERE user_id != ?", [userId], async (err, users) => {
-                if (err) {
-                    console.error("Database error fetching other users:", err);
-                    return res.status(500).json({ message: "Error retrieving users." });
-                }
+                const destinations = users
+                    .filter(u => u.postal_code && u.country)
+                    .map(u => `${u.postal_code},${u.country}`)
+                    .join("|");
 
-                const nearbyUsers = await Promise.all(users.map(async (u) => {
-                    if (!u.postal_code || !u.country) return null;
+                if (!destinations) return res.json({ message: "No users with valid locations found." });
 
-                    const userGeoQuery = `${u.postal_code}, ${u.country}`;
-                    const userGeoUrl = `https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(userGeoQuery)}&key=${apiKey}`;
-                    const userGeoResponse = await axios.get(userGeoUrl);
-                    const userGeo = userGeoResponse.data.results[0]?.geometry.location;
+                // ✅ Use Google Maps Distance Matrix API to calculate distances
+                const distanceResponse = await axios.get(`https://maps.googleapis.com/maps/api/distancematrix/json?origins=${user.postal_code},${user.country}&destinations=${destinations}&mode=driving&key=${apiKey}`);
+                const distances = distanceResponse.data.rows[0].elements;
 
-                    if (!userGeo) return null;
+                // ✅ Filter users within 20km
+                const nearbyUsers = users
+                    .map((u, index) => ({
+                        user_id: u.user_id,
+                        username: u.username,
+                        city: u.city,
+                        country: u.country,
+                        distance: distances[index].distance ? distances[index].distance.value / 1000 : null, // Convert meters to km
+                    }))
+                    .filter(u => u.distance !== null && u.distance <= 20) // Keep users within 20km
+                    .sort((a, b) => a.distance - b.distance); // Sort nearest first
 
-                    // ✅ Calculate Approximate Distance
-                    const distance = Math.sqrt((userGeo.lat - userLocation.lat) ** 2 + (userGeo.lng - userLocation.lng) ** 2);
-                    return { user_id: u.user_id, username: u.username, city: u.city, country: u.country, distance };
-                }));
-
-                const filteredUsers = nearbyUsers.filter(user => user).sort((a, b) => a.distance - b.distance);
-                console.log("Nearby Users:", filteredUsers); // ✅ Debugging log
-                res.json(filteredUsers);
+                res.json(nearbyUsers);
             });
 
         } catch (error) {
-            console.error("Google Maps API error:", error);
+            console.error("Error fetching nearby users:", error);
             res.status(500).json({ message: "Error fetching nearby users." });
         }
     });
 });
 
-// ✅ Find Users with Similar Goals
+//  Find Users with Similar Goals
 app.get("/socials/similar-goals", isAuthenticated, (req, res) => {
     const userId = req.session.user.user_id;
 
@@ -485,7 +473,7 @@ app.get("/socials/similar-goals", isAuthenticated, (req, res) => {
         });
     });
 });
-// ✅ Socket.io Chat Functionality
+//  Socket.io Chat Functionality
 io.on("connection", (socket) => {
     console.log("User connected to chat");
 
@@ -494,7 +482,7 @@ io.on("connection", (socket) => {
     });
 });
 
-// ✅ Send Message (Chat)
+//  Send Message (Chat)
 app.post("/socials/send-message", isAuthenticated, (req, res) => {
     const { recipient_id, group_id, content } = req.body;
     const sender_id = req.session.user.user_id;
@@ -507,7 +495,7 @@ app.post("/socials/send-message", isAuthenticated, (req, res) => {
         });
 });
     
-// ✅ Route: Search Users (Exclude self & mark friends)
+//  Route: Search Users (Exclude self & mark friends)
 app.get("/socials/search-users", isAuthenticated, (req, res) => {
     const searchQuery = req.query.query?.trim();
     const userId = req.session.user.user_id;
@@ -546,7 +534,7 @@ app.get("/socials/search-users", isAuthenticated, (req, res) => {
     });
 });
 
-// ✅ Send Friend Request
+//  Send Friend Request
 app.post("/socials/add-friend", isAuthenticated, (req, res) => {
     const { friend_id } = req.body;
     const userId = req.session.user.user_id;
@@ -600,8 +588,7 @@ app.get("/socials/friend-requests", isAuthenticated, (req, res) => {
     );
 });
 
-// ✅ Accept or Reject Friend Request
-// ✅ Accept or Reject Friend Request & Initialize Private Chat
+//  Accept or Reject Friend Request
 app.post("/socials/respond-friend", isAuthenticated, (req, res) => {
     const { friend_id, action } = req.body;
     const userId = req.session.user.user_id;
@@ -618,7 +605,7 @@ app.post("/socials/respond-friend", isAuthenticated, (req, res) => {
                     return res.status(500).json({ message: "Error accepting friend request." });
                 }
 
-                // ✅ Automatically create an empty private chat entry
+                //  Automatically create an empty private chat entry
                 db.run("INSERT INTO private_chat (sender_id, receiver_id, message) VALUES (?, ?, ?)",
                     [userId, friend_id, ""], (err) => {
                         if (err) {
@@ -642,7 +629,7 @@ app.post("/socials/respond-friend", isAuthenticated, (req, res) => {
     }
 });
 
-// ✅ Get Friend List
+//  Get Friend List
 app.get("/socials/friends", isAuthenticated, (req, res) => {
     const userId = req.session.user.user_id;
 
@@ -662,7 +649,7 @@ app.get("/socials/friends", isAuthenticated, (req, res) => {
     });
 });
 
-// ✅ Create Group and Automatically Add Creator as Member
+//  Create Group and Automatically Add Creator as Member
 app.post("/socials/create-group", isAuthenticated, (req, res) => {
     const { group_name } = req.body;
     const creatorId = req.session.user.user_id;
@@ -680,7 +667,7 @@ app.post("/socials/create-group", isAuthenticated, (req, res) => {
 
             const groupId = this.lastID;
 
-            // ✅ Add creator as a group member
+            //  Add creator as a group member
             db.run("INSERT INTO group_members (group_id, user_id) VALUES (?, ?)",
                 [groupId, creatorId], function (err) {
                     if (err) {
@@ -688,7 +675,7 @@ app.post("/socials/create-group", isAuthenticated, (req, res) => {
                         return res.status(500).json({ message: "Group created but adding creator failed." });
                     }
 
-                    // ✅ Initialize an empty chat entry for the group
+                    //  Initialize an empty chat entry for the group
                     db.run("INSERT INTO group_chat (group_id, sender_id, message) VALUES (?, ?, ?)",
                         [groupId, creatorId, ""], function (err) {
                             if (err) {
@@ -706,7 +693,7 @@ app.post("/socials/create-group", isAuthenticated, (req, res) => {
     );
 });
 
-// ✅ Search for Groups (Exclude Joined Groups)
+//  Search for Groups (Exclude Joined Groups)
 app.get("/socials/search-groups", isAuthenticated, (req, res) => {
     const searchQuery = req.query.query ? `%${req.query.query}%` : "%";
     const userId = req.session.user.user_id;
@@ -729,7 +716,7 @@ app.get("/socials/search-groups", isAuthenticated, (req, res) => {
     });
 });
 
-// ✅ Join Group (No Role Assignment)
+//  Join Group (No Role Assignment)
 app.post("/socials/join-group", isAuthenticated, (req, res) => {
     const { group_id } = req.body;
     const userId = req.session.user.user_id;
@@ -749,7 +736,7 @@ app.post("/socials/join-group", isAuthenticated, (req, res) => {
             return res.json({ message: "You are already a member of this group." });
         }
 
-        // ✅ Insert the user into `group_members` without assigning roles
+        //  Insert the user into `group_members` without assigning roles
         db.run("INSERT INTO group_members (group_id, user_id) VALUES (?, ?)", 
             [group_id, userId], (err) => {
             if (err) {
@@ -782,7 +769,7 @@ app.get("/socials/my-groups", isAuthenticated, (req, res) => {
     );
 });
 
-// ✅ Add Member to Group
+//  Add Member to Group
 app.post("/socials/add-group-member", isAuthenticated, (req, res) => {
     const { group_id, user_id } = req.body;
 
@@ -792,7 +779,7 @@ app.post("/socials/add-group-member", isAuthenticated, (req, res) => {
     });
 });
 
-// ✅ Get Groups a User is in
+//  Get Groups a User is in
 app.get("/socials/groups", isAuthenticated, (req, res) => {
     const userId = req.session.user.user_id;
 
@@ -804,13 +791,13 @@ app.get("/socials/groups", isAuthenticated, (req, res) => {
         [userId], (err, groups) => {
             if (err) return res.status(500).json({ message: "Error retrieving groups." });
 
-            // ✅ Ensure response is always an array
+            //  Ensure response is always an array
             res.json(groups.length ? groups : []);
         }
     );
 });
 
-// ✅ Retrieve Group Chat Messages Using group_id
+//  Retrieve Group Chat Messages Using group_id
 app.get("/socials/group-chat", isAuthenticated, (req, res) => {
     const { group_id } = req.query;
 
@@ -829,13 +816,13 @@ app.get("/socials/group-chat", isAuthenticated, (req, res) => {
                 console.error("Error fetching group chat messages:", err);
                 return res.status(500).json([]);
             }
-            console.log(`Fetched messages for group_id ${group_id}:`, messages); // ✅ Debugging log
+            console.log(`Fetched messages for group_id ${group_id}:`, messages); //  Debugging log
             res.json(Array.isArray(messages) ? messages : []);
         }
     );
 });
 
-// ✅ Send Message to Group Chat (Fixed)
+//  Send Message to Group Chat (Fixed)
 app.post("/socials/group-chat/send", isAuthenticated, (req, res) => {
     const { group_id, message } = req.body;
     const senderId = req.session.user.user_id;
@@ -857,7 +844,7 @@ app.post("/socials/group-chat/send", isAuthenticated, (req, res) => {
     );
 });
 
-// ✅ Retrieve Private Chat Messages Using user_id
+//  Retrieve Private Chat Messages Using user_id
 app.get("/socials/private-chat", isAuthenticated, (req, res) => {
     const { user_id } = req.query;
     const currentUserId = req.session.user.user_id;
@@ -878,13 +865,13 @@ app.get("/socials/private-chat", isAuthenticated, (req, res) => {
                 console.error("Error fetching private chat messages:", err);
                 return res.status(500).json([]);
             }
-            console.log(`Fetched messages for conversation between ${currentUserId} and ${user_id}:`, messages); // ✅ Debugging log
+            console.log(`Fetched messages for conversation between ${currentUserId} and ${user_id}:`, messages); //  Debugging log
             res.json(Array.isArray(messages) ? messages : []);
         }
     );
 });
 
-// ✅ Send Private Chat Message (Ensure user_id is valid)
+//  Send Private Chat Message (Ensure user_id is valid)
 app.post("/socials/private-chat/send", isAuthenticated, (req, res) => {
     const { user_id, message } = req.body;
     const senderId = req.session.user.user_id;
@@ -907,7 +894,7 @@ app.post("/socials/private-chat/send", isAuthenticated, (req, res) => {
     );
 });
 
-// ✅ Delete Group (Only if the user is the creator)
+//  Delete Group (Only if the user is the creator)
 app.post("/socials/delete-group", isAuthenticated, (req, res) => {
     const { group_id } = req.body;
     const userId = req.session.user.user_id;
@@ -927,14 +914,14 @@ app.post("/socials/delete-group", isAuthenticated, (req, res) => {
             return res.json({ message: "You do not have permission to delete this group." });
         }
 
-        // ✅ First, delete all members from group_members
+        //  First, delete all members from group_members
         db.run("DELETE FROM group_members WHERE group_id = ?", [group_id], (err) => {
             if (err) {
                 console.error("Error deleting group members:", err);
                 return res.status(500).json({ message: "Error deleting group members." });
             }
 
-            // ✅ Then, delete the group itself
+            //  Then, delete the group itself
             db.run("DELETE FROM groups WHERE group_id = ?", [group_id], (err) => {
                 if (err) {
                     console.error("Error deleting group:", err);
@@ -947,5 +934,5 @@ app.post("/socials/delete-group", isAuthenticated, (req, res) => {
     });
 });
 
-// ✅ Start Server
-app.listen(3000, () => console.log("🚀 Server running on port 3000"));
+//  Start Server
+app.listen(3000, () => console.log(" Server running on port 3000"));

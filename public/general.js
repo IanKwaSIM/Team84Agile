@@ -12,7 +12,7 @@ document.addEventListener("DOMContentLoaded", function () {
     const navbar = document.querySelector(".navbar");
     const containers = document.querySelectorAll(".container, .account-container, .workout-container");
 
-    // ✅ **Adjust Padding for Fixed Navbar**
+    //  **Adjust Padding for Fixed Navbar**
     function adjustPadding() {
         if (!navbar) return;
         const navbarHeight = navbar.offsetHeight + 10; // Add extra padding
@@ -24,14 +24,14 @@ document.addEventListener("DOMContentLoaded", function () {
     adjustPadding(); // Run on load
     window.addEventListener("resize", adjustPadding); // Adjust on resize
 
-    // ✅ **Sidebar Toggle (Open & Close with Hamburger Click)**
+    //  **Sidebar Toggle (Open & Close with Hamburger Click)**
     if (menuIcon && sidebar) {
         menuIcon.addEventListener("click", () => {
-            sidebar.classList.toggle("open"); // ✅ Toggle open/close
-            console.log(sidebar.classList.contains("open") ? "Sidebar Opened" : "Sidebar Closed"); // ✅ Debugging log
+            sidebar.classList.toggle("open"); //  Toggle open/close
+            console.log(sidebar.classList.contains("open") ? "Sidebar Opened" : "Sidebar Closed"); //  Debugging log
         });
 
-        // ✅ Close Sidebar When Clicking Outside
+        //  Close Sidebar When Clicking Outside
         document.addEventListener("click", (event) => {
             if (!sidebar.contains(event.target) && !menuIcon.contains(event.target)) {
                 sidebar.classList.remove("open");
@@ -39,7 +39,7 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     }
 
-    // ✅ **Login & Register Toggle**
+    //  **Login & Register Toggle**
     if (toggleToLogin && toggleToRegister) {
         toggleToLogin.addEventListener("click", function (e) {
             e.preventDefault();

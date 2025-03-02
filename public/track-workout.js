@@ -24,14 +24,14 @@ document.addEventListener("DOMContentLoaded", function () {
     // Initially hide the exercise section
     exerciseSection.style.display = "none";
 
-    // ✅ **Expand/Collapse Muscle Groups**
+    //  **Expand/Collapse Muscle Groups**
     muscleGroups.forEach(group => {
         group.addEventListener("click", function () {
             this.nextElementSibling.classList.toggle("hidden");
         });
     });
 
-    // ✅ **Load Calendar & Highlight Logged Workouts**
+    //  **Load Calendar & Highlight Logged Workouts**
     function loadCalendar(month, year) {
         fetch(`/workouts/dates`)
             .then(response => response.json())
@@ -111,14 +111,14 @@ document.addEventListener("DOMContentLoaded", function () {
     });
     
 
-    // ✅ **Prevent Duplicate Exercises**
+    //  **Prevent Duplicate Exercises**
     function isExerciseAdded(exerciseName) {
         return Array.from(currentWorkout.children).some(ex => 
             ex.querySelector("h4").textContent === exerciseName
         );
     }
 
-    // ✅ **Add Exercise to Current Workout**
+    //  **Add Exercise to Current Workout**
     exerciseList.addEventListener("click", function (event) {
         if (event.target.tagName === "LI") {
             const exerciseName = event.target.textContent;
@@ -140,7 +140,7 @@ document.addEventListener("DOMContentLoaded", function () {
             <input type="number" value="10" min="1">
             <label>Weight (kg)</label>
             <input type="number" value="0" min="0">
-            <button class="delete-exercise">❌</button>
+            <button class="delete-exercise"></button>
         `;
 
         newExercise.querySelector(".delete-exercise").addEventListener("click", function () {
@@ -154,7 +154,7 @@ document.addEventListener("DOMContentLoaded", function () {
         completeWorkoutBtn.classList.remove("hidden");
     }
 
-    // ✅ **Save Workout Data**
+    //  **Save Workout Data**
     completeWorkoutBtn.addEventListener("click", function () {
         if (!selectedDate) {
             alert("Please select a date first.");
@@ -184,7 +184,7 @@ document.addEventListener("DOMContentLoaded", function () {
         .catch(err => console.error("Error saving workout:", err));
     });
 
-    // ✅ **Delete Workout**
+    //  **Delete Workout**
     deleteWorkoutBtn.addEventListener("click", function () {
         if (!selectedDate) {
             alert("Please select a date first.");

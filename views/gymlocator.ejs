@@ -54,7 +54,7 @@
             autocomplete.addListener("place_changed", () => {
                 let place = autocomplete.getPlace();
                 if (!place.geometry) {
-                    alert("❌ No details found for: " + place.name);
+                    alert(" No details found for: " + place.name);
                     return;
                 }
                 map.setCenter(place.geometry.location);

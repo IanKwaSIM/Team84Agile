@@ -1,4 +1,4 @@
-/* ✅ General Page Styling */
+/*  General Page Styling */
 body {
     font-family: Arial, sans-serif;
     margin: 0;
@@ -7,7 +7,7 @@ body {
     text-align: center;
 }
 
-/* ✅ Persistent Top Bar */
+/*  Persistent Top Bar */
 .navbar {
     background: #333;
     color: white;
@@ -28,24 +28,24 @@ body {
     align-items: center;
 }
 
-/* ✅ Hamburger Menu Icon */
+/*  Hamburger Menu Icon */
 .menu-icon {
     font-size: 30px;
     cursor: pointer;
     margin-left: 20px;
 }
 
-/* ✅ App Logo */
+/*  App Logo */
 .logo {
     font-size: 24px;
     font-weight: bold;
     margin-left: 10px;
 }
 
-/* ✅ Sidebar Default (Hidden) */
+/*  Sidebar Default (Hidden) */
 .sidebar {
     position: fixed;
-    left: -100%; /* ✅ Sidebar starts hidden */
+    left: -100%; /*  Sidebar starts hidden */
     top: 0;
     width: 250px;
     height: 100%;
@@ -59,17 +59,17 @@ body {
     box-shadow: 2px 0 5px rgba(0, 0, 0, 0.5);
 }
 
-/* ✅ Sidebar Open (Visible) */
+/*  Sidebar Open (Visible) */
 .sidebar.open {
-    left: 0; /* ✅ Slide in when toggled */
+    left: 0; /*  Slide in when toggled */
 }
 
-/* ✅ Ensure Sidebar Closes When Clicking Outside */
+/*  Ensure Sidebar Closes When Clicking Outside */
 .sidebar.open ~ .content {
     pointer-events: none;
 }
 
-/* ✅ Sidebar Menu Items */
+/*  Sidebar Menu Items */
 .sidebar-menu {
     width: 100%;
     list-style-type: none;
@@ -95,7 +95,7 @@ body {
     padding-left: 10px;
 }
 
-/* ✅ Settings Icon */
+/*  Settings Icon */
 .settings-icon {
     position: absolute;
     bottom: 20px;
@@ -104,7 +104,7 @@ body {
     cursor: pointer;
 }
 
-/* ✅ Workout Page Layout */
+/*  Workout Page Layout */
 .workout-container {
     display: flex;
     justify-content: space-between;
@@ -112,7 +112,7 @@ body {
     padding: 80px 20px;
 }
 
-/* ✅ Workout Sections */
+/*  Workout Sections */
 .workout-section {
     width: 30%;
     background: white;
@@ -122,7 +122,7 @@ body {
     text-align: center;
 }
 
-/* ✅ Calendar Styles */
+/*  Calendar Styles */
 #calendar {
     display: grid;
     grid-template-columns: repeat(7, 1fr);
@@ -130,7 +130,7 @@ body {
     padding: 10px;
 }
 
-/* ✅ Calendar Days */
+/*  Calendar Days */
 .calendar-day {
     display: inline-block;
     width: 40px;
@@ -148,21 +148,21 @@ body {
     background: #d4d4d4;
 }
 
-/* ✅ Highlight Logged Workouts */
+/*  Highlight Logged Workouts */
 .workout-day {
     background: #ff9800 !important; /* Orange color for logged workouts */
     color: white;
     font-weight: bold;
 }
 
-/* ✅ Highlight Selected Date */
+/*  Highlight Selected Date */
 .calendar-day.selected {
     background: #555;
     color: white;
     font-weight: bold;
 }
 
-/* ✅ Calendar Header */
+/*  Calendar Header */
 .calendar-header {
     display: flex;
     justify-content: space-between;
@@ -171,7 +171,7 @@ body {
     margin-bottom: 10px;
 }
 
-/* ✅ Month and Year Selectors */
+/*  Month and Year Selectors */
 #prev-month, #next-month {
     cursor: pointer;
     font-size: 20px;
@@ -183,7 +183,7 @@ body {
     font-weight: bold;
 }
 
-/* ✅ Exercise List */
+/*  Exercise List */
 .exercise-list li {
     padding: 8px;
     margin: 4px;
@@ -193,14 +193,14 @@ body {
     transition: background 0.3s;
 }
 
-/* ✅ Highlight Selected Exercise */
+/*  Highlight Selected Exercise */
 .exercise-list li.selected {
     background: #555;
     color: white;
     font-weight: bold;
 }
 
-/* ✅ Expandable Muscle Groups */
+/*  Expandable Muscle Groups */
 .muscle-group h3 {
     cursor: pointer;
     background: #eee;
@@ -213,7 +213,7 @@ body {
     background: #ddd;
 }
 
-/* ✅ Current Workout Container */
+/*  Current Workout Container */
 #current-workout {
     background: white;
     padding: 20px;
@@ -222,7 +222,7 @@ body {
     min-height: 150px;
 }
 
-/* ✅ Workout Item */
+/*  Workout Item */
 .workout-item {
     background: #f9f9f9;
     padding: 10px;
@@ -230,7 +230,7 @@ body {
     border-radius: 5px;
 }
 
-/* ✅ Buttons */
+/*  Buttons */
 .btn {
     width: 100%;
     padding: 10px;
@@ -249,7 +249,7 @@ body {
     display: none;
 }
 
-/* ✅ Log New Workout Button */
+/*  Log New Workout Button */
 #log-new-workout {
     width: 100%;
     padding: 10px;
@@ -265,7 +265,7 @@ body {
     background: #00796b;
 }
 
-/* ✅ Map */
+/*  Map */
 #map {
     width: 100%;
     height: 500px;
@@ -294,7 +294,7 @@ body {
     background: #f0f0f0;
 }
 
-/* ✅ Responsive Layout */
+/*  Responsive Layout */
 @media (max-width: 768px) {
     .workout-container {
         flex-direction: column;
@@ -307,7 +307,7 @@ body {
     }
 }
 
-/* ✅ General Styling */
+/*  General Styling */
 body {
     font-family: Arial, sans-serif;
     margin: 0;
@@ -315,7 +315,7 @@ body {
     background-color: #f4f4f4;
 }
 
-/* ✅ Main Socials Container */
+/*  Main Socials Container */
 .socials-container {
     display: flex;
     justify-content: space-between;
@@ -325,7 +325,7 @@ body {
     padding-top: 70px; /* Ensure nothing overlaps navbar */
 }
 
-/* ✅ Left Sidebar: User/Group Search & Nearby Users */
+/*  Left Sidebar: User/Group Search & Nearby Users */
 .social-left {
     width: 25%;
     background: white;
@@ -340,7 +340,7 @@ body {
     margin-bottom: 20px;
 }
 
-/* ✅ Middle Chat Section (Modern Chat App Style) */
+/*  Middle Chat Section (Modern Chat App Style) */
 .chat-section {
     width: 50%;
     background: white;
@@ -370,7 +370,7 @@ body {
     text-align: right;
 }
 
-/* ✅ Chat Messages */
+/*  Chat Messages */
 #chatMessages {
     flex-grow: 1;
     overflow-y: auto;
@@ -381,7 +381,7 @@ body {
     flex-direction: column;
 }
 
-/* ✅ Message Bubbles */
+/*  Message Bubbles */
 .message {
     max-width: 75%;
     padding: 10px;
@@ -402,7 +402,7 @@ body {
     color: black;
 }
 
-/* ✅ Chat Input Box */
+/*  Chat Input Box */
 .chat-input {
     display: flex;
     padding: 10px;
@@ -435,7 +435,7 @@ body {
     background: #0056b3;
 }
 
-/* ✅ Right Sidebar: Friends & Groups */
+/*  Right Sidebar: Friends & Groups */
 .social-right {
     width: 25%;
     background: white;
@@ -450,7 +450,7 @@ body {
     margin-bottom: 20px;
 }
 
-/* ✅ Buttons */
+/*  Buttons */
 button {
     display: block;
     width: 100%;
@@ -467,7 +467,7 @@ button:hover {
     background: #0056b3;
 }
 
-/* ✅ Responsive Layout */
+/*  Responsive Layout */
 @media (max-width: 768px) {
     .socials-container {
         flex-direction: column;

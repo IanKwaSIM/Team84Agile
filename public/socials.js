@@ -1,5 +1,5 @@
 document.addEventListener("DOMContentLoaded", function () {
-    // ✅ Attach functions globally
+    //  Attach functions globally
     window.sendFriendRequest = sendFriendRequest;
     window.respondFriendRequest = respondFriendRequest;
     window.sendChatMessage = sendChatMessage;
@@ -13,7 +13,7 @@ document.addEventListener("DOMContentLoaded", function () {
     window.closeChat = closeChat;
     window.searchUsers = searchUsers;
 
-    // ✅ Load initial data
+    //  Load initial data
     loadFriends().then(() => {
         findNearbyUsers();
         findSimilarGoals();
@@ -21,7 +21,7 @@ document.addEventListener("DOMContentLoaded", function () {
     loadFriendRequests();
     loadChatMessages();
 
-// ✅ **Retrieve Friend List First**
+//  **Retrieve Friend List First**
 let friendsList = new Set();
 
 async function loadFriends() {
@@ -36,7 +36,7 @@ async function loadFriends() {
                 return;
             }
 
-            friendsList = new Set(friends.map(friend => friend.user_id)); // ✅ Store friends in a Set
+            friendsList = new Set(friends.map(friend => friend.user_id)); //  Store friends in a Set
 
             friendList.innerHTML = friends.map(friend => `
                 <div>
@@ -53,7 +53,7 @@ document.getElementById("searchUserForm").addEventListener("submit", function (e
     searchUsers();
 });
 
-// ✅ Search Users Function
+//  Search Users Function
 function searchUsers() {
     const searchQuery = document.getElementById("searchUser").value.trim();
     
@@ -96,8 +96,10 @@ function searchUsers() {
         });
 }
 
-// ✅ **Find Nearby Users (Exclude Friends)**
+//  **Find Nearby Users (Exclude Friends)**
 function findNearbyUsers() {
+    console.log("Fetching nearby users...");
+
     fetch("/socials/nearby-users")
         .then(response => response.json())
         .then(users => {
@@ -109,21 +111,18 @@ function findNearbyUsers() {
                 return;
             }
 
-            nearbyUsersList.innerHTML = users
-                .filter(user => !friendsList.has(user.user_id)) // ✅ Exclude friends
-                .map(user => `
-                    <div>
-                        <p>${user.username} - ${user.city}, ${user.country}</p>
-                        <button onclick="sendFriendRequest(${user.user_id})">
-                            Add Friend
-                        </button>
-                    </div>
-                `).join("");
+            nearbyUsersList.innerHTML = users.map(user => `
+                <div>
+                    <p>${user.username} - ${user.city}, ${user.country} <br> 
+                    <small>${user.distance.toFixed(2)} km away</small></p>
+                    <button onclick="sendFriendRequest(${user.user_id})">Add Friend</button>
+                </div>
+            `).join("");
         })
         .catch(error => console.error("Error fetching nearby users:", error));
 }
 
-// ✅ **Find Users with Similar Goals (Exclude Friends)**
+//  **Find Users with Similar Goals (Exclude Friends)**
 function findSimilarGoals() {
     fetch("/socials/similar-goals")
         .then(response => response.json())
@@ -137,7 +136,7 @@ function findSimilarGoals() {
             }
 
             similarGoalsList.innerHTML = users
-                .filter(user => !friendsList.has(user.user_id)) // ✅ Exclude friends
+                .filter(user => !friendsList.has(user.user_id)) //  Exclude friends
                 .map(user => `
                     <div>
                         <p>${user.username} - ${user.goals}</p>
@@ -150,7 +149,7 @@ function findSimilarGoals() {
         .catch(error => console.error("Error fetching similar goals:", error));
 }
 
-// ✅ Accept or Reject Friend Request
+//  Accept or Reject Friend Request
 function respondFriendRequest(friendId, action) {
     fetch("/socials/respond-friend", {
         method: "POST",
@@ -166,7 +165,7 @@ function respondFriendRequest(friendId, action) {
     .catch(error => console.error("Error responding to friend request:", error));
 }
 
-// ✅ **Send Friend Request**
+//  **Send Friend Request**
 function sendFriendRequest(friendId) {
     if (!friendId) {
         console.error("Error: friendId is undefined.");
@@ -193,7 +192,7 @@ function sendFriendRequest(friendId) {
     });
 }
 
-// ✅ **Load Pending Friend Requests**
+//  **Load Pending Friend Requests**
 function loadFriendRequests() {
     fetch("/socials/friend-requests")
         .then(response => response.json())
@@ -243,12 +242,12 @@ function loadFriendRequests() {
             .catch(error => console.error("Error searching groups:", error));
     }
     
-    // ✅ Load groups initially
+    //  Load groups initially
     document.addEventListener("DOMContentLoaded", function () {
         searchGroups();
     });
 /*
-    // ✅ Attach Search Event to Button
+    //  Attach Search Event to Button
     document.getElementById("searchGroupForm").addEventListener("submit", function (e) {
         e.preventDefault();
         searchGroups();
@@ -272,7 +271,7 @@ function loadFriendRequests() {
     loadAvailableGroups();
     loadMyGroups();
 
-    // ✅ Load Available Groups (Public Groups)
+    //  Load Available Groups (Public Groups)
     function loadAvailableGroups() {
         fetch("/socials/search-groups?query=")
             .then(response => response.json())
@@ -295,7 +294,7 @@ function loadFriendRequests() {
             .catch(error => console.error("Error fetching groups:", error));
     }
 
-    // ✅ Load My Groups (Groups the User Has Joined)
+    //  Load My Groups (Groups the User Has Joined)
     function loadMyGroups() {
         const userIdElement = document.getElementById("currentUserId");
 
@@ -333,12 +332,12 @@ function loadFriendRequests() {
             .catch(error => console.error("Error fetching my groups:", error));
     }
     
-    // ✅ Ensure function runs after DOM loads
+    //  Ensure function runs after DOM loads
     document.addEventListener("DOMContentLoaded", function () {
         loadMyGroups();
     });
 
-    // ✅ Delete Group (Only if User is the Creator)
+    //  Delete Group (Only if User is the Creator)
     function deleteGroup(groupId) {
         if (!confirm("Are you sure you want to delete this group?")) return;
 
@@ -355,13 +354,13 @@ function loadFriendRequests() {
         .catch(error => console.error("Error deleting group:", error));
     }
 
-    // ✅ Switch Group Tabs
+    //  Switch Group Tabs
     function switchGroupTab(tab) {
         document.getElementById("availableGroupsSection").style.display = (tab === "available") ? "block" : "none";
         document.getElementById("myGroupsSection").style.display = (tab === "my") ? "block" : "none";
     }
 
-    // ✅ Create Group (Ensures creator is the leader)
+    //  Create Group (Ensures creator is the leader)
     function createGroup() {
         const groupNameInput = document.getElementById("groupName");
         const groupName = groupNameInput.value.trim(); // Remove extra spaces
@@ -408,13 +407,13 @@ function loadFriendRequests() {
         loadChatMessages(chatId, type);
     }
     
-    // ✅ Close Chat
+    //  Close Chat
     function closeChat() {
         const chatContainer = document.getElementById("chatContainer");
         chatContainer.style.display = "none"; // Hide chat
     }
 
-    // ✅ Load Group Chat Messages (Fixed)
+    //  Load Group Chat Messages (Fixed)
     function loadGroupChatMessages(groupId) {
         fetch(`/socials/group-chat?group_id=${groupId}`)
             .then(response => response.json())
@@ -427,7 +426,7 @@ function loadFriendRequests() {
             .catch(error => console.error("Error fetching chat messages:", error));
     }
 
-    // ✅ Load Private Chat Messages (Fixed)
+    //  Load Private Chat Messages (Fixed)
     function loadPrivateChatMessages(friendId) {
         fetch(`/socials/private-chat?friend_id=${friendId}`)
             .then(response => response.json())
@@ -440,7 +439,7 @@ function loadFriendRequests() {
             .catch(error => console.error("Error fetching private chat messages:", error));
     }
 
-    // ✅ Load Chat Messages (Align Based on Sender)
+    //  Load Chat Messages (Align Based on Sender)
     function loadChatMessages(chatId, type) {
         if (!chatId) {
             console.error("Error: chatId is undefined.");
@@ -474,7 +473,7 @@ function loadFriendRequests() {
             .catch(error => console.error(`Error loading ${type} chat:`, error));
     }
 
-    // ✅ Send Private Chat Message with Debugging
+    //  Send Private Chat Message with Debugging
     function sendChatMessage() {
         const messageInput = document.getElementById("chatMessage");
         const chatId = document.getElementById("sendChatMessage").dataset.chatId;
@@ -491,7 +490,7 @@ function loadFriendRequests() {
             ? { group_id: chatId, message: messageInput.value } 
             : { user_id: chatId, message: messageInput.value };
 
-        console.log("Sending Chat Request:", apiEndpoint, "Payload:", payload); // ✅ Debugging log
+        console.log("Sending Chat Request:", apiEndpoint, "Payload:", payload); //  Debugging log
 
         fetch(apiEndpoint, {
             method: "POST",
