@@ -7,14 +7,22 @@
     <link rel="stylesheet" href="/styles.css">
     <script defer src="/general.js"></script>
     <script defer src="/track-workout.js"></script>
+    <script defer src="/auth.js"></script>
 </head>
 <body>
-
     <!-- Persistent Top Bar -->
     <nav class="navbar">
         <div class="nav-left">
             <span class="menu-icon">☰</span>
             <h1 class="logo">ELEVATE</h1>
+        </div>
+        <!-- Login / Logout button on nav bar -->
+        <div class="nav-right">
+            <% if (user) { %>
+                <button id="logout-btn" class="login-btn">Logout</button>
+            <% } else { %>
+                <button id="login-btn" class="login-btn">Login</button>
+            <% } %>
         </div>
     </nav>
 
@@ -53,14 +61,14 @@
             <h2>ADD EXERCISE</h2>
             <div id="exercise-list">
                 <% for (let group in exercises) { %>
-                <div class="muscle-group">
-                    <h3><%= group %> ▼</h3>
-                    <ul class="exercise-list hidden">
-                        <% exercises[group].forEach(ex => { %>
-                            <li data-id="<%= ex.exercise_id %>"><%= ex.name %></li>
-                        <% }); %>
-                    </ul>
-                </div>
+                    <div class="muscle-group">
+                        <h3><%= group %> ▼</h3>
+                        <ul class="exercise-list hidden">
+                            <% exercises[group].forEach(ex => { %>
+                                <li data-id="<%= ex.exercise_id %>"><%= ex.name %></li>
+                            <% }); %>
+                        </ul>
+                    </div>
                 <% } %>
             </div>
         </div>
@@ -70,8 +78,8 @@
             <h2 id="workout-title">CURRENT WORKOUT</h2>
             <div id="current-workout"></div>
             <button id="complete-workout" class="btn hidden">Complete Workout</button>
-            <button id="delete-workout" class="btn hidden">Delete Workout</button> <!-- Ensure it's added -->
+            <button id="delete-workout" class="btn hidden">Delete Workout</button>
         </div>
-
+    </div>
 </body>
 </html>

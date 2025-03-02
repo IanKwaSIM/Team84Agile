@@ -16,6 +16,14 @@
         <span class="menu-icon">☰</span>
         <h1 class="logo">ELEVATE</h1>
       </div>
+      <!-- Login / Logout button on nav bar -->
+      <div class="nav-right">
+        <% if (user) { %>
+          <button id="logout-btn" class="login-btn">Logout</button>
+        <% } else { %>
+          <button id="login-btn" class="login-btn">Login</button>
+        <% } %>
+      </div>
     </nav>
 
     <!-- Sidebar Menu -->
@@ -35,20 +43,33 @@
       <div class="settings-icon">⚙️</div>
     </div>
 
-    <div class="intro-text">
-        <h1>Welcome to Elevate!</h1>
-        <p>Join us today and start your fitness journey with a supportive community. Stay motivated, track your progress, and achieve your goals together!</p>
-    </div>
+    <!-- <div class="intro-text">
+      <h1>Welcome to Elevate!</h1>
+      <p>
+        Join us today and start your fitness journey with a supportive
+        community. Stay motivated, track your progress, and achieve your goals
+        together!
+      </p>
+    </div> -->
 
     <div class="container">
       <% if (user) { %>
-      <h1>Welcome, <%= user.username %>!</h1>
-      <p>Explore the app using the navigation menu.</p>
+      <div class="intro-text2">
+        <h1>Welcome, <%= user.username %>!</h1>
+        <p>Explore the app using the navigation menu.</p>
+      </div>
       <% } else { %>
-      <div class="auth-container">
+      <div class="intro-text">
+        <h1>Welcome to Elevate!</h1>
+        <p>
+          Join us today and start your fitness journey with a supportive
+          community. Stay motivated, track your progress, and achieve your goals
+          together!
+        </p>
+      </div>
+      <div class="auth-container" id="auth-container" style="display: none;">
         <!-- Login Form -->
         <form id="login-form" method="POST" action="/login">
-          <!-- <h2>Login</h2> -->
           <div class="input-group">
             <label for="email">Email:</label>
             <input

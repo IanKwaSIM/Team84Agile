@@ -337,6 +337,11 @@ body {
         width: 90%;
         margin-bottom: 20px;
     }
+
+    .intro-text2 {
+        font-size: 1.2rem;
+        padding: 10px;
+    }
 }
 
 /* yz changes */
@@ -399,15 +404,27 @@ body {
     font-weight: bold;
     color: #333;
 }
-/* for login/home page end */
 
-body::before {
-    content: "ELEVATE";
+/* Centering .intro-text2 */
+.intro-text2 {
     position: absolute;
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    font-size: 420px; /* Adjust for desired size */
+
+    font-size: 2.5rem;
+    font-weight: bold;
+    color: black;
+}
+/* for login/home page end */
+
+body::before {
+    content: "ELEVATE";
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 22vw; /* Adjust font size (22% of viewport width) */
     font-weight: bold;
     color: rgba(0, 0, 0, 0.1); /* Light gray, adjust opacity */
     z-index: -1; /* Sends it to the background */
@@ -490,4 +507,23 @@ input, select {
     margin: 5px 0;
     padding: 10px;
     border-radius: 5px;
+}
+
+/* login button */
+.nav-right {
+    display: flex;
+    align-items: center;
+}
+.login-btn {
+    padding: 10px 20px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    cursor: pointer;
+    border-radius: 5px;
+    margin-right: 40px;
+}
+
+.login-btn:hover {
+    background-color: #0056b3;
 }

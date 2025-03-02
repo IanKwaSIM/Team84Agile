@@ -7,6 +7,7 @@
     <link rel="stylesheet" href="/styles.css">
     <script defer src="/general.js"></script>
     <script defer src="/account.js"></script>
+    <script defer src="/auth.js"></script>
 </head>
 <body>
 
@@ -16,6 +17,14 @@
             <span class="menu-icon">☰</span>
             <h1 class="logo">ELEVATE</h1>
         </div>
+        <!-- Login / Logout button on nav bar -->
+      <div class="nav-right">
+        <% if (user) { %>
+          <button id="logout-btn" class="login-btn">Logout</button>
+        <% } else { %>
+          <button id="login-btn" class="login-btn">Login</button>
+        <% } %>
+      </div>
     </nav>
 
     <!-- Sidebar Menu -->
