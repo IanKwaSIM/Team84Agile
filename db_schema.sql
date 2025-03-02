@@ -8,14 +8,16 @@ CREATE TABLE users (
     country        VARCHAR(100), -- Optional country
     city           VARCHAR(100), -- Optional city
     address        TEXT,         -- Optional full address
-    postal_code    VARCHAR(20),  -- Optional postal code
+    postal_code    VARCHAR(30),  -- Optional postal code
     occupation     VARCHAR(100), -- Optional occupation
     age            INT,
     height_cm      DECIMAL(5,2) CHECK (height_cm > 0),
     weight_kg      DECIMAL(5,2) CHECK (weight_kg > 0),
     bmi            DECIMAL(5,2) DEFAULT NULL,
     goals          TEXT,
-    created_at     TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    created_at     TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    latitude DECIMAL(9,6),
+    longitude DECIMAL(9,6)
 );
 
 -- Create Exercises Table
@@ -59,13 +61,54 @@ CREATE TABLE personal_records (
 );
 
 -- Create Friends Table
-CREATE TABLE friends (
-    user_id         INT REFERENCES users(user_id) ON DELETE CASCADE,
-    friend_id       INT REFERENCES users(user_id) ON DELETE CASCADE,
-    status VARCHAR(20) CHECK (status IN ('pending', 'accepted', 'blocked')) DEFAULT 'pending',
-    requested_at    TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    PRIMARY KEY (user_id, friend_id),
-    CHECK (user_id <> friend_id)
+CREATE TABLE IF NOT EXISTS friends (
+    friendship_id INTEGER PRIMARY KEY AUTOINCREMENT,
+    user_id INTEGER NOT NULL,
+    friend_id INTEGER NOT NULL,
+    status TEXT CHECK( status IN ('pending', 'accepted', 'rejected') ) DEFAULT 'pending',
+    requested_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY(user_id) REFERENCES users(user_id),
+    FOREIGN KEY(friend_id) REFERENCES users(user_id),
+    UNIQUE(user_id, friend_id)
+);
+
+CREATE TABLE IF NOT EXISTS groups (
+    group_id INTEGER PRIMARY KEY AUTOINCREMENT,
+    group_name TEXT NOT NULL,
+    created_by INTEGER NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY(created_by) REFERENCES users(user_id)
+);
+
+CREATE TABLE IF NOT EXISTS group_members (
+    group_member_id INTEGER PRIMARY KEY AUTOINCREMENT,
+    group_id INTEGER NOT NULL,
+    user_id INTEGER NOT NULL,
+    joined_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY(group_id) REFERENCES groups(group_id),
+    FOREIGN KEY(user_id) REFERENCES users(user_id),
+    UNIQUE(group_id, user_id)
+);
+
+
+CREATE TABLE IF NOT EXISTS group_chat (
+    message_id INTEGER PRIMARY KEY AUTOINCREMENT,
+    group_id INTEGER NOT NULL,
+    sender_id INTEGER NOT NULL,
+    message TEXT NOT NULL,
+    timestamp DATETIME DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (group_id) REFERENCES groups (group_id) ON DELETE CASCADE,
+    FOREIGN KEY (sender_id) REFERENCES users (user_id) ON DELETE CASCADE
+);
+
+CREATE TABLE IF NOT EXISTS private_chat (
+    message_id INTEGER PRIMARY KEY AUTOINCREMENT,
+    sender_id INTEGER NOT NULL,
+    receiver_id INTEGER NOT NULL,
+    message TEXT NOT NULL,
+    timestamp DATETIME DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (sender_id) REFERENCES users(user_id) ON DELETE CASCADE,
+    FOREIGN KEY (receiver_id) REFERENCES users(user_id) ON DELETE CASCADE
 );
 
 -- Populate Exercises Table

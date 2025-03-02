@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Social Hub</title>
+    <link rel="stylesheet" href="/styles.css">
+    <script defer src="/socials.js"></script>
+    <script defer src="/general.js"></script>
+</head>
+<body>
+
+    <!-- Persistent Top Bar -->
+    <nav class="navbar">
+        <div class="nav-left">
+            <span class="menu-icon">☰</span>
+            <h1 class="logo">ELEVATE</h1>
+        </div>
+    </nav>
+
+    <!-- Sidebar Menu -->
+    <div class="sidebar">
+        <button class="close-btn">✖</button>
+        <ul class="sidebar-menu">
+            <li><a href="/">Home</a></li>
+            <li><a href="/account">My Fitness</a></li>
+            <li><a href="/track-workout">Track Workout</a></li>
+            <li><a href="/socials">Social Hub</a></li>
+            <li><a href="/gymlocator">Gym Locator</a></li>
+            <li><a href="/logout">Logout</a></li>
+        </ul>
+    </div>
+
+    <div class="socials-container">
+        <!-- Store current user ID for JavaScript access -->
+        <input type="hidden" id="currentUserId" value="<%= user ? user.user_id : '' %>">
+
+        <!-- ✅ Left Sidebar: User Search & Nearby Users -->
+        <div class="social-left">
+            <!-- Search Users -->
+            <div class="social-section">
+                <h2>Search Users</h2>
+                <form id="searchUserForm">
+                    <input type="text" id="searchUser" placeholder="Enter username">
+                    <button type="submit">Search</button>
+                </form>
+                <div id="searchResults"></div>
+            </div>
+
+            <div class="nearby-section">
+                <h2>Find Users</h2>
+                <h3>Nearby Users</h3>
+                <div id="nearbyUsersList"></div>
+                <h3>Similar Goals</h3>
+                <div id="similarGoalsList"></div>
+            </div>
+        </div>
+
+        <!-- Chat System (Hidden Initially) -->
+        <div id="chatContainer" class="chat-container hidden">
+            <!-- Chat Header -->
+            <div class="chat-header">
+                <h2 id="chatTitle">Chat</h2>
+                <button onclick="closeChat()" class="close-chat-btn">✖</button>
+            </div>
+
+            <!-- Chat Messages -->
+            <div id="chatMessages"></div>
+
+            <!-- Chat Input Area (Message Box & Send Button) -->
+            <div class="chat-input-container">
+                <input type="text" id="chatMessage" placeholder="Type a message">
+                <button id="sendChatMessage">Send</button>
+            </div>
+        </div>
+
+        <!-- ✅ Right Sidebar: Friends & Groups -->
+        <div class="social-right">
+            <div class="friend-section">
+                <h2>Friends</h2>
+                <h3>Pending Requests</h3>
+                <div id="friendRequests"></div>
+                <h3>Your Friends</h3>
+                <div id="friendList"></div>
+            </div>
+
+            <div class="group-section">
+                <h2>Groups</h2>
+                <div class="group-tab-container">
+                    <button onclick="switchGroupTab('available')">Available Groups</button>
+                    <button onclick="switchGroupTab('my')">My Groups</button>
+                </div>
+
+                <div id="availableGroupsSection">
+                     <!-- 
+                    <form id="searchGroupForm">
+                        <h3>Search Groups</h3>
+                        <input type="text" id="searchGroup" placeholder="Search groups...">
+                        <button type="submit">Search</button>
+                    </form>  -->
+                    <div id="availableGroupList"></div>
+                </div>
+
+                <div id="myGroupsSection" style="display: none;">
+                    <h3>My Groups</h3>
+                    <div id="myGroupList"></div>
+                </div>
+
+                <h3>Create Group</h3>
+                <form id="createGroupForm">
+                    <input type="text" id="groupName" placeholder="Enter group name" oninput="toggleCreateButton()">
+                    <button type="button" id="createGroupBtn" onclick="createGroup()" disabled>Create Group</button>
+                </form>
+
+                <script>
+                function toggleCreateButton() {
+                    const groupName = document.getElementById("groupName").value.trim();
+                    document.getElementById("createGroupBtn").disabled = groupName === "";
+                }
+                </script>
+            </div>
+        </div>
+
+    </div>
+
+</body>
+</html>
