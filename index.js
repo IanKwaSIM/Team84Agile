@@ -5,13 +5,11 @@ const path = require("path");
 const bcrypt = require("bcrypt");
 const axios = require("axios");
 const http = require("http");
-const { Server } = require("socket.io");
 
 const app = express();
 const db = new sqlite3.Database("./database.db");
 
 const server = http.createServer(app);
-const io = new Server(server);
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -416,13 +414,13 @@ app.get("/socials/nearby-users", isAuthenticated, async (req, res) => {
         }
 
         try {
-            // ✅ Get user's latitude & longitude
+            // Get user's latitude & longitude
             const userGeoResponse = await axios.get(`https://maps.googleapis.com/maps/api/geocode/json?address=${user.postal_code},${user.country}&key=${apiKey}`);
             const userLocation = userGeoResponse.data.results[0]?.geometry.location;
 
             if (!userLocation) return res.json({ message: "Invalid postal code." });
 
-            // ✅ Retrieve all other users' postal codes
+            // Retrieve all other users' postal codes
             db.all("SELECT user_id, username, postal_code, country, city FROM users WHERE user_id != ?", [userId], async (err, users) => {
                 if (err) return res.status(500).json({ message: "Error retrieving users." });
 
@@ -433,11 +431,11 @@ app.get("/socials/nearby-users", isAuthenticated, async (req, res) => {
 
                 if (!destinations) return res.json({ message: "No users with valid locations found." });
 
-                // ✅ Use Google Maps Distance Matrix API to calculate distances
+                // Use Google Maps Distance Matrix API to calculate distances
                 const distanceResponse = await axios.get(`https://maps.googleapis.com/maps/api/distancematrix/json?origins=${user.postal_code},${user.country}&destinations=${destinations}&mode=driving&key=${apiKey}`);
                 const distances = distanceResponse.data.rows[0].elements;
 
-                // ✅ Filter users within 20km
+                // Filter users within 20km
                 const nearbyUsers = users
                     .map((u, index) => ({
                         user_id: u.user_id,
@@ -471,14 +469,6 @@ app.get("/socials/similar-goals", isAuthenticated, (req, res) => {
             if (err) return res.status(500).json([]);
             res.json(users.length ? users : []);
         });
-    });
-});
-//  Socket.io Chat Functionality
-io.on("connection", (socket) => {
-    console.log("User connected to chat");
-
-    socket.on("newMessage", (message) => {
-        io.emit("newMessage", message);
     });
 });
 
