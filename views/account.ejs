@@ -112,27 +112,22 @@
             </form>
         </div>
 
-        <!-- Right Side: My Personal Bests -->
-        <div class="personal-bests">
-            <h2>My Personal Records</h2>
-            <% if (Object.keys(personalRecords).length === 0) { %>
-                <p>No personal records found.</p>
-            <% } else { %>
-                <% for (let muscleGroup in personalRecords) { %>
-                    <div class="muscle-group">
-                        <h3 class="pr-toggle"><%= muscleGroup %> ▼</h3>
-                        <ul class="pr-list hidden">
-                            <% personalRecords[muscleGroup].forEach(record => { %>
-                                <li>
-                                    <strong><%= record.exercise_name %></strong> - 
-                                    <%= record.max_weight %> kg, <%= record.max_reps %> reps
-                                    <br><small>Achieved on: <%= record.achieved_date %></small>
-                                </li>
-                            <% }); %>
-                        </ul>
-                    </div>
+        <!-- Past Workouts Section -->
+        <div class="past-workouts">
+            <h2>Past Workouts</h2>
+            <div id="past-workouts-list">
+                <% if (pastWorkouts.length === 0) { %>
+                    <p>No past workouts recorded.</p>
+                <% } else { %>
+                    <% pastWorkouts.forEach(workout => { %>
+                        <div class="workout-item">
+                            <h4><%= workout.date %></h4>
+                            <p><strong>Exercise:</strong> <%= workout.name %> (<%= workout.muscle_group %>)</p>
+                            <p><strong>Sets:</strong> <%= workout.sets %>, <strong>Reps:</strong> <%= workout.reps %>, <strong>Weight:</strong> <%= workout.weight %> kg</p>
+                        </div>
+                    <% }); %>
                 <% } %>
-            <% } %>
+            </div>
         </div>
     </div>
         

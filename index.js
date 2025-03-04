@@ -448,7 +448,85 @@ app.get("/account", isAuthenticated, (req, res) => {
                         groupedPRs[record.muscle_group].push(record);
                     });
 
-                    res.render("account", { user, personalRecords: groupedPRs });
+                    //  Retrieve Past Workouts (Including PRs)
+                    db.all(`
+                        SELECT workouts.workout_date AS date, exercises.name, exercises.muscle_group, 
+                               workout_exercises.sets, workout_exercises.reps, workout_exercises.weight
+                        FROM workout_exercises
+                        JOIN workouts ON workouts.workout_id = workout_exercises.workout_id
+                        JOIN exercises ON exercises.exercise_id = workout_exercises.exercise_id
+                        WHERE workouts.user_id = ?
+                        ORDER BY workouts.workout_date DESC`,
+                        [userId], (err, pastWorkouts) => {
+                            if (err) return res.send("Error retrieving past workouts.");
+                            
+                            res.render("account", { user, personalRecords: groupedPRs, pastWorkouts });
+                        }
+                    );
+                }
+            );
+        }
+    );
+});
+
+// API Route: Fetch User Data & Past Workouts as JSON
+app.get("/account/data", isAuthenticated, (req, res) => {
+    const userId = req.session.user.user_id;
+
+    //  Retrieve User Profile Data
+    db.get(`
+        SELECT username, email, phone, country, city, address, postal_code, 
+               height_cm, weight_kg, bmi, age, goals, occupation
+        FROM users WHERE user_id = ?`,
+        [userId], (err, user) => {
+            if (err || !user) {
+                console.error("Error fetching user profile:", err);
+                return res.status(500).json({ error: "Error retrieving user data." });
+            }
+
+            //  Retrieve Personal Records (PRs)
+            db.all(`
+                SELECT exercises.name AS exercise_name, exercises.muscle_group, 
+                       personal_records.max_weight, personal_records.max_reps, 
+                       personal_records.achieved_date
+                FROM personal_records
+                JOIN exercises ON personal_records.exercise_id = exercises.exercise_id
+                WHERE personal_records.user_id = ?
+                ORDER BY exercises.muscle_group ASC, personal_records.max_weight DESC`,
+                [userId], (err, personalRecords) => {
+                    if (err) {
+                        console.error("Error fetching PRs:", err);
+                        return res.status(500).json({ error: "Error retrieving PRs." });
+                    }
+                    
+                    //  Group PRs by muscle group
+                    let groupedPRs = {};
+                    personalRecords.forEach(record => {
+                        if (!groupedPRs[record.muscle_group]) {
+                            groupedPRs[record.muscle_group] = [];
+                        }
+                        groupedPRs[record.muscle_group].push(record);
+                    });
+
+                    //  Retrieve Past Workouts (Including PRs)
+                    db.all(`
+                        SELECT workouts.workout_date AS date, exercises.name, exercises.muscle_group, 
+                               workout_exercises.sets, workout_exercises.reps, workout_exercises.weight
+                        FROM workout_exercises
+                        JOIN workouts ON workouts.workout_id = workout_exercises.workout_id
+                        JOIN exercises ON exercises.exercise_id = workout_exercises.exercise_id
+                        WHERE workouts.user_id = ?
+                        ORDER BY workouts.workout_date DESC`,
+                        [userId], (err, pastWorkouts) => {
+                            if (err) {
+                                console.error("Error fetching past workouts:", err);
+                                return res.status(500).json({ error: "Error retrieving past workouts." });
+                            }
+
+                            //  Send JSON response
+                            res.json({ user, personalRecords: groupedPRs, pastWorkouts });
+                        }
+                    );
                 }
             );
         }
