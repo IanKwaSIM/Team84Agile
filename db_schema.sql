@@ -111,6 +111,26 @@ CREATE TABLE IF NOT EXISTS private_chat (
     FOREIGN KEY (receiver_id) REFERENCES users(user_id) ON DELETE CASCADE
 );
 
+CREATE TABLE weekly_challenges (
+    challenge_id INTEGER PRIMARY KEY AUTOINCREMENT,
+    exercise_id  INTEGER NOT NULL,
+    start_date   DATE NOT NULL,
+    end_date     DATE NOT NULL,
+    FOREIGN KEY (exercise_id) REFERENCES exercises(exercise_id)
+);
+
+CREATE TABLE weekly_challenge_participants (
+    attempt_id    INTEGER PRIMARY KEY AUTOINCREMENT,
+    challenge_id  INTEGER NOT NULL,
+    user_id       INTEGER NOT NULL,
+    sets          INTEGER DEFAULT 0,
+    reps          INTEGER DEFAULT 0,
+    weight        DECIMAL(6,2) DEFAULT 0.00,
+    distance      DECIMAL(6,2) DEFAULT 0.00,
+    FOREIGN KEY (challenge_id) REFERENCES weekly_challenges(challenge_id),
+    FOREIGN KEY (user_id) REFERENCES users(user_id)
+);
+
 -- Populate Exercises Table
 INSERT INTO exercises (name, muscle_group, equipment) VALUES
     -- Chest Exercises

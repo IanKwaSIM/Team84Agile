@@ -5,6 +5,8 @@ const path = require("path");
 const bcrypt = require("bcrypt");
 const axios = require("axios");
 const http = require("http");
+const cors = require("cors");
+const schedule = require("node-schedule");
 
 const app = express();
 const db = new sqlite3.Database("./database.db");
@@ -13,7 +15,13 @@ const server = http.createServer(app);
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use(session({ secret: "secret-key", resave: false, saveUninitialized: true }));
+app.use(cors({ origin: "http://localhost:3000", credentials: true }));
+app.use(session({
+    secret: "secret-key",
+    resave: false,
+    saveUninitialized: true,
+}));
+
 
 // Set up EJS for rendering views
 app.set("view engine", "ejs");
@@ -26,6 +34,64 @@ function isAuthenticated(req, res, next) {
     }
     next();
 }
+
+function scheduleWeeklyChallenge() {
+    console.log(" Checking or setting up the weekly challenge...");
+
+    // Get the current week’s start and end date
+    const today = new Date();
+    const startOfWeek = new Date(today.setDate(today.getDate() - today.getDay())); // Start of this week
+    const endOfWeek = new Date(today.setDate(today.getDate() + 6)); // End of this week
+
+    const startDate = startOfWeek.toISOString().split("T")[0];
+    const endDate = endOfWeek.toISOString().split("T")[0];
+
+    // Check if a challenge already exists for this week
+    db.get("SELECT * FROM weekly_challenges WHERE start_date = ?", [startDate], (err, existingChallenge) => {
+        if (err) {
+            console.error(" Error checking weekly challenge:", err);
+            return;
+        }
+
+        if (existingChallenge) {
+            console.log(`Weekly challenge already exists: Exercise ID ${existingChallenge.exercise_id}`);
+            return;
+        }
+
+        console.log(" Selecting a new weekly challenge...");
+
+        // Get a random exercise from the database
+        db.get("SELECT exercise_id FROM exercises ORDER BY RANDOM() LIMIT 1", [], (err, row) => {
+            if (err || !row) {
+                console.error(" Error selecting weekly challenge:", err);
+                return;
+            }
+
+            const exerciseId = row.exercise_id;
+
+            // Insert new weekly challenge into the database
+            db.run(
+                "INSERT INTO weekly_challenges (exercise_id, start_date, end_date) VALUES (?, ?, ?)",
+                [exerciseId, startDate, endDate],
+                (err) => {
+                    if (err) {
+                        console.error(" Error inserting weekly challenge:", err);
+                    } else {
+                        console.log(`New Weekly Challenge: Exercise ID ${exerciseId}, Start: ${startDate}, End: ${endDate}`);
+                    }
+                }
+            );
+        });
+    });
+
+    // Schedule the Weekly Challenge Selection (Runs Every Monday at Midnight)
+    schedule.scheduleJob("0 0 * * 1", () => {
+        console.log("Running scheduled weekly challenge update...");
+        scheduleWeeklyChallenge();
+    });
+}
+
+
 
 // Home Page
 app.get("/", (req, res) => {
@@ -189,57 +255,90 @@ app.get("/workouts/:date", isAuthenticated, (req, res) => {
     );
 });
 
-//  Save a Workout & Update PRs
 app.post("/workouts/save", isAuthenticated, (req, res) => {
     const { date, workout } = req.body;
     const userId = req.session.user.user_id;
 
-    // Step 1: Insert workout if it does not already exist
-    db.run("INSERT INTO workouts (user_id, workout_date) VALUES (?, ?) ON CONFLICT(user_id, workout_date) DO NOTHING",
-        [userId, date], function (err) {
+    // Step 1: Insert Workout Session (if not exists)
+    db.run(
+        "INSERT INTO workouts (user_id, workout_date) VALUES (?, ?) ON CONFLICT(user_id, workout_date) DO NOTHING",
+        [userId, date],
+        function (err) {
             if (err) {
-                console.error(" Error saving workout:", err);
+                console.error("Error saving workout:", err);
                 return res.status(500).json({ message: "Error saving workout." });
             }
 
-            // Step 2: Get the workout ID (fetch latest ID if already exists)
-            db.get("SELECT workout_id FROM workouts WHERE user_id = ? AND workout_date = ?", 
-                [userId, date], (err, row) => {
-                if (err || !row) {
-                    console.error(" Error retrieving workout ID:", err);
-                    return res.status(500).json({ message: "Error retrieving workout." });
+            // Get the workout_id of the session (either new or existing)
+            db.get(
+                "SELECT workout_id FROM workouts WHERE user_id = ? AND workout_date = ?",
+                [userId, date],
+                (err, workoutSession) => {
+                    if (err || !workoutSession) {
+                        return res.status(500).json({ message: "Error retrieving workout session." });
+                    }
+
+                    const workoutId = workoutSession.workout_id;
+
+                    // Step 2: Insert Exercises into Workout Log
+                    const insertExercises = workout.map((ex) => {
+                        return new Promise((resolve, reject) => {
+                            db.run(
+                                "INSERT INTO workout_exercises (workout_id, exercise_id, sets, reps, weight) VALUES (?, ?, ?, ?, ?)",
+                                [workoutId, ex.exercise_id, ex.sets, ex.reps, ex.weight || 0],
+                                (err) => (err ? reject(err) : resolve())
+                            );
+                        });
+                    });
+
+                    // Step 3: Check for Weekly Challenge Participation
+                    db.get(
+                        `SELECT challenge_id FROM weekly_challenges
+                         WHERE DATE('now') BETWEEN start_date AND end_date`,
+                        [],
+                        async (err, challenge) => {
+                            if (err || !challenge) {
+                                console.log("No active weekly challenge.");
+                                return;
+                            }
+
+                            const challengeId = challenge.challenge_id;
+
+                            // Filter only exercises that match the challenge exercise
+                            const challengeExercises = workout.filter(
+                                (ex) => ex.exercise_id === challenge.exercise_id
+                            );
+
+                            if (challengeExercises.length > 0) {
+                                console.log(`🏆 User ${userId} participated in the weekly challenge!`);
+
+                                // Insert Challenge Participation
+                                const insertChallengeEntries = challengeExercises.map((ex) => {
+                                    return new Promise((resolve, reject) => {
+                                        db.run(
+                                            `INSERT INTO weekly_challenge_participants 
+                                             (challenge_id, user_id, sets, reps, weight)
+                                             VALUES (?, ?, ?, ?, ?)`,
+                                            [challengeId, userId, ex.sets, ex.reps, ex.weight || 0],
+                                            (err) => (err ? reject(err) : resolve())
+                                        );
+                                    });
+                                });
+
+                                await Promise.all(insertChallengeEntries);
+                            }
+                        }
+                    );
+
+                    // Step 4: Complete the workout log insertion
+                    Promise.all(insertExercises)
+                        .then(() => res.json({ message: "Workout logged successfully!" }))
+                        .catch((err) => {
+                            console.error("Error saving exercises:", err);
+                            res.status(500).json({ message: "Error saving exercises." });
+                        });
                 }
-
-                const workoutId = row.workout_id;
-                console.log(" Workout ID:", workoutId);
-
-                // Step 3: Insert exercises into workout_exercises
-                const insertExercises = workout.map(ex => {
-                    return new Promise((resolve, reject) => {
-                        db.run("INSERT INTO workout_exercises (workout_id, exercise_id, sets, reps, weight) VALUES (?, ?, ?, ?, ?)",
-                            [workoutId, ex.exercise_id, ex.sets, ex.reps, ex.weight],
-                            err => err ? reject(err) : resolve()
-                        );
-                    });
-                });
-
-                Promise.all(insertExercises)
-                    .then(() => {
-                        console.log(" Workout logged successfully!");
-                        
-                        // Step 4: Update PRs in personal_records
-                        updatePersonalRecords(userId, workout)
-                            .then(() => res.json({ message: "Workout logged and PRs updated!" }))
-                            .catch(err => {
-                                console.error(" Error updating PRs:", err);
-                                res.status(500).json({ message: "Workout saved, but PR update failed." });
-                            });
-                    })
-                    .catch(err => {
-                        console.error(" Error saving exercises:", err);
-                        res.status(500).json({ message: "Error saving exercises." });
-                    });
-            });
+            );
         }
     );
 });
@@ -922,6 +1021,127 @@ app.post("/socials/delete-group", isAuthenticated, (req, res) => {
             });
         });
     });
+});
+
+app.get("/weekly-challenge", (req, res) => {
+    scheduleWeeklyChallenge(); // Run challenge selection logic
+
+    // Fetch the current challenge
+    db.get(
+        `SELECT wc.exercise_id, e.name AS exercise_name, wc.start_date, wc.end_date 
+         FROM weekly_challenges wc
+         JOIN exercises e ON wc.exercise_id = e.exercise_id
+         ORDER BY wc.start_date DESC LIMIT 1`, 
+        (err, challenge) => {
+            if (err) {
+                console.error("Error fetching weekly challenge:", err);
+                return res.status(500).send("Error retrieving challenge.");
+            }
+
+            if (!challenge) {
+                console.log("No active weekly challenge found.");
+            }
+
+            const userId = req.session.user?.user_id;
+
+            // Get the user's participation
+            db.get(
+                `SELECT weight, reps FROM workout_exercises we
+                 JOIN workouts w ON we.workout_id = w.workout_id
+                 WHERE w.user_id = ? AND we.exercise_id = ? 
+                 AND w.workout_date BETWEEN ? AND ? 
+                 ORDER BY (we.weight * we.reps) DESC LIMIT 1`,
+                [userId, challenge?.exercise_id, challenge?.start_date, challenge?.end_date],
+                (err, userChallenge) => {
+                    if (err) {
+                        console.error("Error fetching user challenge data:", err);
+                        return res.status(500).send("Error retrieving user progress.");
+                    }
+
+                    // Retrieve leaderboard data (Keeping Only the Best Entry Per User)
+                    db.all(
+                        `SELECT u.username, MAX(we.weight * we.reps) AS best_score, we.weight, we.reps 
+                         FROM workout_exercises we
+                         JOIN workouts w ON we.workout_id = w.workout_id
+                         JOIN users u ON w.user_id = u.user_id
+                         WHERE we.exercise_id = ? 
+                         AND w.workout_date BETWEEN ? AND ? 
+                         GROUP BY u.user_id  -- Ensures only the best record per user
+                         ORDER BY best_score DESC LIMIT 10`,
+                        [challenge?.exercise_id, challenge?.start_date, challenge?.end_date],
+                        (err, leaderboard) => {
+                            if (err) {
+                                console.error("Error fetching leaderboard:", err);
+                                return res.status(500).send("Error retrieving leaderboard.");
+                            }
+
+                            res.render("weekly-challenge", {
+                                user: req.session.user,
+                                challenge,
+                                userChallenge,
+                                leaderboard: leaderboard || []
+                            });
+                        }
+                    );
+                }
+            );
+        }
+    );
+});
+
+// Route: Get Current Weekly Challenge Data
+app.get("/weekly-challenge/data", (req, res) => {
+    const today = new Date().toISOString().split("T")[0];
+
+    db.get(
+        `SELECT wc.challenge_id, wc.exercise_id, e.name AS exercise_name, e.muscle_group, wc.start_date, wc.end_date
+        FROM weekly_challenges wc
+        JOIN exercises e ON wc.exercise_id = e.exercise_id
+        WHERE wc.start_date <= ? AND wc.end_date >= ? 
+        ORDER BY wc.start_date DESC LIMIT 1`,
+        [today, today],
+        (err, challenge) => {
+            if (err) {
+                console.error(" Error fetching weekly challenge:", err);
+                return res.status(500).json({ message: "Error fetching weekly challenge." });
+            }
+
+            if (!challenge) {
+                return res.json({ message: "No active weekly challenge found." });
+            }
+
+            res.json(challenge);
+        }
+    );
+});
+
+app.get("/weekly-challenge/rankings", isAuthenticated, (req, res) => {
+    db.get(
+        `SELECT challenge_id FROM weekly_challenges
+         WHERE DATE('now') BETWEEN start_date AND end_date`,
+        [],
+        (err, challenge) => {
+            if (err || !challenge) return res.json({ message: "No active challenge rankings." });
+
+            const challengeId = challenge.challenge_id;
+
+            db.all(
+                `SELECT u.username, wcp.sets, wcp.reps, wcp.weight, wcp.distance
+                 FROM weekly_challenge_participants wcp
+                 JOIN users u ON wcp.user_id = u.user_id
+                 WHERE wcp.challenge_id = ?
+                 ORDER BY wcp.weight DESC, wcp.reps DESC, wcp.distance DESC LIMIT 10`,
+                [challengeId],
+                (err, rankings) => {
+                    if (err) {
+                        console.error("Error fetching challenge rankings:", err);
+                        return res.status(500).json({ message: "Error fetching rankings." });
+                    }
+                    res.json(rankings);
+                }
+            );
+        }
+    );
 });
 
 //  Start Server

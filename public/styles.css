@@ -656,3 +656,52 @@ button:hover {
 .open-chat-btn:hover {
     background: #0056b3;
 }
+
+.challenge-container {
+    max-width: 800px;
+    margin: auto;
+    padding: 20px;
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    text-align: center;
+}
+
+.current-challenge, .user-progress, .leaderboard {
+    margin-bottom: 20px;
+    padding: 15px;
+    border-radius: 8px;
+    background: #f9f9f9;
+}
+
+.leaderboard table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.leaderboard th, .leaderboard td {
+    padding: 10px;
+    border-bottom: 1px solid #ddd;
+    text-align: center;
+}
+
+.leaderboard th {
+    background: #007bff;
+    color: white;
+}
+
+.leaderboard tr:nth-child(even) {
+    background: #f2f2f2;
+}
+
+h1, h2, h3 {
+    color: #333;
+}
+
+#userParticipation {
+    font-weight: bold;
+}
+
+.hidden {
+    display: none;
+}

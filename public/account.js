@@ -10,6 +10,7 @@ document.addEventListener("DOMContentLoaded", function () {
             exerciseList.classList.toggle("hidden");
         });
     });
+    
 
     //  **Fetch and Display Past Workout Records**
     function fetchPastWorkouts() {

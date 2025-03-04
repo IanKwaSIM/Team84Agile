@@ -9,8 +9,8 @@ const singaporeRegions = [
     { lat: 1.345, lng: 103.930 }, // East (Tampines, Changi)
     { lat: 1.2905, lng: 103.7750 }, // West (Jurong, Clementi)
     { lat: 1.320, lng: 103.700 }, // South-West (Bukit Timah, Bukit Batok)
-    { lat: 1.283, lng: 103.635 }, // 📍 NEW: Tuas Area (Western Singapore)
-    { lat: 1.310, lng: 103.690 }, // 📍 NEW: Pioneer & Boon Lay
+    { lat: 1.283, lng: 103.635 }, // NEW: Tuas Area (Western Singapore)
+    { lat: 1.310, lng: 103.690 }, // NEW: Pioneer & Boon Lay
 ];
 
 function initMap() {
@@ -96,7 +96,7 @@ function createMarker(place) {
 // Function to refresh gym search every 60 seconds
 function autoRefreshGyms() {
     setInterval(() => {
-        console.log("🔄 Refreshing gym search...");
+        console.log("Refreshing gym search...");
         searchAllRegions();
     }, 60000); // Refresh every 60 seconds
 }

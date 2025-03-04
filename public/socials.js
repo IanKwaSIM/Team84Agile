@@ -246,12 +246,6 @@ function loadFriendRequests() {
     document.addEventListener("DOMContentLoaded", function () {
         searchGroups();
     });
-/*
-    //  Attach Search Event to Button
-    document.getElementById("searchGroupForm").addEventListener("submit", function (e) {
-        e.preventDefault();
-        searchGroups();
-    });*/
 
     function joinGroup(groupId) {
         fetch("/socials/join-group", {

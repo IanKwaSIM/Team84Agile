@@ -20,18 +20,17 @@
 
     <!-- Sidebar Menu -->
     <div class="sidebar">
-        <button class="close-btn">✖</button>
-        <div class="profile-icon"></div>
         <ul class="sidebar-menu">
-            <li><a href="/">Home</a></li>
-            <li><a href="/account">Account & Fitness</a></li>
-            <li><a href="/track-workout">Track Workout</a></li>
-            <li><a href="/socials">Social</a></li>
-            <li><a href="#">Weekly Challenge</a></li>
-            <li><a href="/gymlocator">Gym Locator</a></li>
-            <li><a href="/logout">Logout</a></li>
+            <% if (user) { %>
+                <li><a href="/">Home</a></li>
+                <li><a href="/account">My Fitness</a></li>
+                <li><a href="/track-workout">Track Workout</a></li>
+                <li><a href="/socials">Social</a></li>
+                <li><a href="/weekly-challenge">Weekly Challenge</a></li>
+                <li><a href="/gymlocator">Gym Locator</a></li>
+                <li><a href="/logout">Logout</a></li>
+            <% } %>
         </ul>
-        <div class="settings-icon">⚙️</div>
     </div>
 
     <!-- Main Content -->
