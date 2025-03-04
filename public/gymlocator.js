@@ -45,7 +45,7 @@ function searchGyms(location) {
     console.log(`🔍 Searching for gyms in region: ${location.lat}, ${location.lng}`);
 
     const request = {
-        query: "gym",
+        type: "gym",
         location: location,
         radius: 10000, // 10 km range per search to get better coverage
         fields: ["name", "geometry", "formatted_address"],
@@ -57,14 +57,16 @@ function searchGyms(location) {
 
 function handleResults(results, status, pagination) {
     let gymList = document.getElementById("gym-list");
-    clearGymList(); // Ensure gym list is cleared before updating
 
     if (status === google.maps.places.PlacesServiceStatus.OK) {
-        console.log(`✅ Found ${results.length} gyms in this area`);
+        console.log(`✅ Found ${results.length} places`);
 
         results.forEach((place) => {
-            createMarker(place); // 🔹 Add markers dynamically
-            addGymToList(place); // 🔹 Update the gym list
+            // 🔹 Exclude places with certain keywords
+            if (!isUnwantedPlace(place.name)) {
+                createMarker(place)
+                addGymToList(place);
+            }
         });
 
         if (pagination && pagination.hasNextPage) {
@@ -178,8 +180,11 @@ function updateNearbyGyms(location) {
             });
 
             results.forEach((place) => {
-                fetchGymDetails(place); // ✅ Fetch full details before adding to the list
-                createMarker(place); // ✅ Add gym marker to the map
+                // ✅ Ensure we filter out unwanted locations before processing
+                if (!isUnwantedPlace(place.name)) {
+                    fetchGymDetails(place); // ✅ Fetch full details before adding to the list
+                    createMarker(place); // ✅ Add gym marker to the map
+                }
             });
         } else {
             console.error("❌ No nearby gyms found.");
@@ -200,7 +205,9 @@ function fetchGymDetails(place) {
         } else {
             place.formatted_address = place.vicinity || "No address available";
         }
-        addGymToList(place); // ✅ Add gym to the list with the correct address
+        if (!isUnwantedPlace(place.name)) {
+            addGymToList(place);
+        } // ✅ Add gym to the list with the correct address
     });
 }
 
@@ -232,6 +239,21 @@ function clearGymList() {
     if (gymList) {
         gymList.innerHTML = ""; // Clears the gym list
     }
+}
+
+function isUnwantedPlace(name) {
+    const unwantedKeywords = [
+        "fitness corner",
+        "playground",
+        "basketball court",
+        "bike park",
+        "bicycle",
+        "stadium",
+        "home gym",
+        "outdoor gym"
+    ];
+
+    return unwantedKeywords.some(keyword => name.toLowerCase().includes(keyword));
 }
 
 window.onload = () => {
