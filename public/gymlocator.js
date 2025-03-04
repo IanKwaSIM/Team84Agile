@@ -9,12 +9,12 @@ const singaporeRegions = [
     { lat: 1.345, lng: 103.930 }, // East (Tampines, Changi)
     { lat: 1.2905, lng: 103.7750 }, // West (Jurong, Clementi)
     { lat: 1.320, lng: 103.700 }, // South-West (Bukit Timah, Bukit Batok)
-    { lat: 1.283, lng: 103.635 }, // 📍 NEW: Tuas Area (Western Singapore)
-    { lat: 1.310, lng: 103.690 }, // 📍 NEW: Pioneer & Boon Lay
+    { lat: 1.283, lng: 103.635 }, // NEW: Tuas Area (Western Singapore)
+    { lat: 1.310, lng: 103.690 }, // NEW: Pioneer & Boon Lay
 ];
 
 function initMap() {
-    console.log("🗺️ Initializing Google Maps...");
+    console.log(" Initializing Google Maps...");
 
     const singaporeLocation = { lat: 1.3521, lng: 103.8198 }; // Central Singapore
 
@@ -29,7 +29,7 @@ function initMap() {
 
 // Function to search gyms in all predefined Singapore regions
 function searchAllRegions() {
-    console.log("🔍 Searching for gyms across multiple regions in Singapore...");
+    console.log(" Searching for gyms across multiple regions in Singapore...");
 
     singaporeRegions.forEach((region, index) => {
         setTimeout(() => {
@@ -39,7 +39,7 @@ function searchAllRegions() {
 }
 
 function searchGyms(location) {
-    console.log(`🔍 Searching for gyms in region: ${location.lat}, ${location.lng}`);
+    console.log(` Searching for gyms in region: ${location.lat}, ${location.lng}`);
 
     const request = {
         query: "gym",
@@ -57,7 +57,7 @@ function handleResults(results, status, pagination) {
     gymList.innerHTML = ""; // Clear previous results
 
     if (status === google.maps.places.PlacesServiceStatus.OK) {
-        console.log(`✅ Found ${results.length} gyms in this region`);
+        console.log(` Found ${results.length} gyms in this region`);
 
         results.forEach((place) => {
             createMarker(place);
@@ -68,7 +68,7 @@ function handleResults(results, status, pagination) {
             setTimeout(() => pagination.nextPage(), 2000);
         }
     } else {
-        console.error("❌ Places API Error:", status);
+        console.error(" Places API Error:", status);
         gymList.innerHTML = "<li>No gyms found in this area.</li>";
     }
 }
@@ -96,7 +96,7 @@ function createMarker(place) {
 // Function to refresh gym search every 60 seconds
 function autoRefreshGyms() {
     setInterval(() => {
-        console.log("🔄 Refreshing gym search...");
+        console.log(" Refreshing gym search...");
         searchAllRegions();
     }, 60000); // Refresh every 60 seconds
 }
@@ -105,11 +105,11 @@ function searchLocation() {
     const query = document.getElementById("location-input").value.trim();
 
     if (!query) {
-        alert("❌ Please enter a location or gym name.");
+        alert(" Please enter a location or gym name.");
         return;
     }
 
-    console.log("🔍 Searching for:", query);
+    console.log(" Searching for:", query);
 
     const request = {
         query: query,
@@ -124,10 +124,10 @@ function searchLocation() {
             map.setZoom(14); // Zoom in to show the searched area
 
             results.forEach((place) => createMarker(place)); // Mark all found gyms
-            console.log("✅ Found location:", results[0]);
+            console.log(" Found location:", results[0]);
 
         } else {
-            alert("❌ Location or gym not found. Try again.");
+            alert(" Location or gym not found. Try again.");
         }
     });
 }

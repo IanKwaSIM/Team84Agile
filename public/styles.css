@@ -37,37 +37,63 @@ body {
 
 /* ✅ App Logo */
 .logo {
-    font-size: 24px;
+    font-size: 30px;
     font-weight: bold;
     margin-left: 10px;
 }
 
-/* ✅ Sidebar Menu */
+/* ✅ Sidebar Menu (instant display)*/
 .sidebar {
     position: fixed;
     left: -100%;
-    top: 0;
+    top: 50px;
     width: 300px;
     height: 100%;
     background: #222;
     color: white;
-    transition: left 0.3s ease-in-out;
+    /* transition: left 0.2s ease-in-out; */
     display: flex;
     flex-direction: column;
     align-items: flex-start;
     padding-top: 20px;
     box-shadow: 2px 0 5px rgba(0, 0, 0, 0.5);
+    z-index: 999; /* Ensure it is above other elements other than nav bar */
 }
 
 .sidebar.open {
     left: 0;
 }
 
+.sidebar:not(.open) {
+    transition: left 0.5s ease-out; /* Slower ease out */
+}
+
+/* ✅ Overlay */
+.overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    display: none; /* Hidden by default */
+    z-index: 998; /* Ensure it is above other elements but below the sidebar and nav bar*/
+}
+
+/* Show overlay when sidebar is open (mainly for gymlocator page) */
+.sidebar.open + .overlay {
+    display: block;
+}
+
 /* ✅ Close Button */
 .sidebar .close-btn {
     position: absolute;
-    top: 15px;
-    left: 15px;
+    /* top: 15px;
+    left: 15px; */
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    
     font-size: 24px;
     cursor: pointer;
     background: none;
@@ -311,19 +337,28 @@ body {
         width: 90%;
         margin-bottom: 20px;
     }
-}
 
+    .intro-text2 {
+        font-size: 1.2rem;
+        padding: 10px;
+    }
+}
 
 /* yz changes */
 /* for login/home page */
 .auth-container {
-    width: 350px;
-    margin: 50px auto;
+    width: 400px;
     padding: 30px;
     background: white;
     border-radius: 10px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
     text-align: center;
+
+    /* Centering */
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
 }
 
 .input-group {
@@ -360,7 +395,41 @@ body {
 .toggle-link:hover {
     text-decoration: underline;
 }
+
+.intro-text {
+    text-align: center;
+    margin: 100px auto;
+    max-width: 800px;
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #333;
+}
+
+/* Centering .intro-text2 */
+.intro-text2 {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+
+    font-size: 2.5rem;
+    font-weight: bold;
+    color: black;
+}
 /* for login/home page end */
+
+body::before {
+    content: "ELEVATE";
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 22vw; /* Adjust font size (22% of viewport width) */
+    font-weight: bold;
+    color: rgba(0, 0, 0, 0.1); /* Light gray, adjust opacity */
+    z-index: -1; /* Sends it to the background */
+    white-space: nowrap; /* Prevents text from wrapping */
+}
 
 /* for accounts page */
 .profile-container {
@@ -394,3 +463,67 @@ input, select {
     border-radius: 5px;
 }
 /* for accounts page end */
+
+/* for challenge page */
+.challenge-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    max-width: 1000px;
+    margin: 50px auto;
+    margin-top: 100px;
+}
+
+.challenge-section {
+    flex: 1;
+    background: white;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    margin-right: 20px;
+}
+
+.leaderboard {
+    width: 250px;
+    background: white;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+    margin-top: 100px;
+}
+
+.leaderboard h2 {
+    text-align: center;
+}
+
+#leaderboard-list {
+    list-style: none;
+    padding: 0;
+}
+
+#leaderboard-list li {
+    background: #e3e3e3;
+    margin: 5px 0;
+    padding: 10px;
+    border-radius: 5px;
+}
+
+/* login button */
+.nav-right {
+    display: flex;
+    align-items: center;
+}
+.login-btn {
+    padding: 10px 20px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    cursor: pointer;
+    border-radius: 5px;
+    margin-right: 40px;
+}
+
+.login-btn:hover {
+    background-color: #0056b3;
+}

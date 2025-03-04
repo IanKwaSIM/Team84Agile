@@ -13,26 +13,28 @@
     <!-- Persistent Top Bar -->
     <nav class="navbar">
         <div class="nav-left">
+            <% if (user) { %>
             <span class="menu-icon">☰</span>
+            <% } %>
             <h1 class="logo">ELEVATE</h1>
         </div>
     </nav>
 
+    <% if (user) { %>
     <!-- Sidebar Menu -->
     <div class="sidebar">
-        <button class="close-btn">✖</button>
-        <div class="profile-icon"></div>
         <ul class="sidebar-menu">
-            <li><a href="/">Home</a></li>
-            <li><a href="/account">Account & Fitness</a></li>
-            <li><a href="/track-workout">Track Workout</a></li>
-            <li><a href="#">Social</a></li>
-            <li><a href="#">Weekly Challenge</a></li>
-            <li><a href="/gymlocator">Gym Locator</a></li>
-            <li><a href="/logout">Logout</a></li>
+                <li><a href="/">Home</a></li>
+                <li><a href="/account">My Fitness</a></li>
+                <li><a href="/track-workout">Track Workout</a></li>
+                <li><a href="/socials">Social</a></li>
+                <li><a href="/weekly-challenge">Weekly Challenge</a></li>
+                <li><a href="/gymlocator">Gym Locator</a></li>
+                <li><a href="/logout">Logout</a></li>
+            
         </ul>
-        <div class="settings-icon">⚙️</div>
     </div>
+    <% } %>
 
     <!-- Main Content -->
     <div class="profile-container">
@@ -100,7 +102,7 @@
                     <option value="Gain Muscle" <%= user.goals === "Gain Muscle" ? "selected" : "" %>>🏋️ Gain Muscle</option>
                     <option value="Improve Endurance" <%= user.goals === "Improve Endurance" ? "selected" : "" %>>🏃 Improve Endurance</option>
                     <option value="Increase Strength" <%= user.goals === "Increase Strength" ? "selected" : "" %>>🔥 Increase Strength</option>
-                    <option value="Maintain Fitness" <%= user.goals === "Maintain Fitness" ? "selected" : "" %>>✅ Maintain Fitness</option>
+                    <option value="Maintain Fitness" <%= user.goals === "Maintain Fitness" ? "selected" : "" %>> Maintain Fitness</option>
                 </select>
 
                 <label>Occupation</label>

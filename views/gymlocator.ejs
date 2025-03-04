@@ -12,28 +12,29 @@
 
     <!-- Persistent Top Bar -->
     <nav class="navbar">
-    <div class="nav-left">
-        <span class="menu-icon">☰</span>
-        <h1 class="logo">ELEVATE</h1>
-    </div>
+        <div class="nav-left">
+            <% if (user) { %>
+            <span class="menu-icon">☰</span>
+            <% } %>
+            <h1 class="logo">ELEVATE</h1>
+        </div>
     </nav>
 
+    <% if (user) { %>
     <!-- Sidebar Menu -->
     <div class="sidebar">
-    <button class="close-btn">✖</button>
-    <ul class="sidebar-menu">
-        <% if (user) { %>
-            <li><a href="/">Home</a></li>
-            <li><a href="/account">My Fitness</a></li>
-            <li><a href="/track-workout">Track Workout</a></li>
-            <li><a href="#">Social</a></li>
-            <li><a href="#">Weekly Challenge</a></li>
-            <li><a href="/gymlocator">Gym Locator</a></li>
-            <li><a href="/logout">Logout</a></li>
-        <% } %>
-    </ul>
-        <div class="settings-icon">⚙️</div>
+        <ul class="sidebar-menu">
+                <li><a href="/">Home</a></li>
+                <li><a href="/account">My Fitness</a></li>
+                <li><a href="/track-workout">Track Workout</a></li>
+                <li><a href="/socials">Social</a></li>
+                <li><a href="/weekly-challenge">Weekly Challenge</a></li>
+                <li><a href="/gymlocator">Gym Locator</a></li>
+                <li><a href="/logout">Logout</a></li>
+            
+        </ul>
     </div>
+    <% } %>
     
     <div class="container">
         <h2>Find a Gym Near You</h2>
@@ -41,7 +42,7 @@
         <button onclick="searchLocation()">Search</button>
         <div id="map"></div>
 
-        <!-- 📍 New: Gym List Section -->
+        <!-- New: Gym List Section -->
         <h3>Nearby Gyms</h3>
         <ul id="gym-list"></ul>
     </div>
@@ -54,7 +55,7 @@
             autocomplete.addListener("place_changed", () => {
                 let place = autocomplete.getPlace();
                 if (!place.geometry) {
-                    alert("❌ No details found for: " + place.name);
+                    alert(" No details found for: " + place.name);
                     return;
                 }
                 map.setCenter(place.geometry.location);
@@ -64,7 +65,7 @@
         }
     </script>
     
-    <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBXW1lY6EDrjIG3vd1L86ymIN9YKH7_ml4&libraries=places&callback=initMap&loading=async"></script>
+    <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBXW1lY6EDrjIG3vd1L86ymIN9YKH7_ml4&libraries=places,geometry&callback=initMap&loading=async"></script>
 
 </body>
 </html>
