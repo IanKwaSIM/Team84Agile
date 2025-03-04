@@ -1,9 +1,6 @@
 let map;
 let service;
 let infowindow;
-let refreshCount = 0;  // ✅ Declare refreshCount globally
-const maxRefreshes = 0; // Stop refreshing after one full cycle
-let markers = []; // ✅ Ensure this is at the top of the file
 
 // Define multiple regions covering different parts of Singapore
 const singaporeRegions = [
@@ -45,7 +42,7 @@ function searchGyms(location) {
     console.log(`🔍 Searching for gyms in region: ${location.lat}, ${location.lng}`);
 
     const request = {
-        type: "gym",
+        query: "gym",
         location: location,
         radius: 10000, // 10 km range per search to get better coverage
         fields: ["name", "geometry", "formatted_address"],
@@ -57,23 +54,21 @@ function searchGyms(location) {
 
 function handleResults(results, status, pagination) {
     let gymList = document.getElementById("gym-list");
+    gymList.innerHTML = ""; // Clear previous results
 
     if (status === google.maps.places.PlacesServiceStatus.OK) {
-        console.log(`✅ Found ${results.length} places`);
+        console.log(`✅ Found ${results.length} gyms in this region`);
 
         results.forEach((place) => {
-            // 🔹 Exclude places with certain keywords
-            if (!isUnwantedPlace(place.name)) {
-                createMarker(place)
-                addGymToList(place);
-            }
+            createMarker(place);
+            addGymToList(place);
         });
 
         if (pagination && pagination.hasNextPage) {
             setTimeout(() => pagination.nextPage(), 2000);
         }
     } else {
-        console.error("❌ No gyms found in this area.");
+        console.error("❌ Places API Error:", status);
         gymList.innerHTML = "<li>No gyms found in this area.</li>";
     }
 }
@@ -98,25 +93,19 @@ function createMarker(place) {
     });
 }
 
+// Function to refresh gym search every 60 seconds
 function autoRefreshGyms() {
-    setTimeout(() => {
-        if (refreshCount >= maxRefreshes) {
-            console.log("✅ Gym search refreshed once. Stopping further refresh.");
-            return;
-        }
-
-        console.log(`🔄 Refreshing gyms... (Cycle ${refreshCount + 1}/${maxRefreshes})`);
+    setInterval(() => {
+        console.log("🔄 Refreshing gym search...");
         searchAllRegions();
-        refreshCount++; // Track number of refreshes
-
-    }, 60000); // Runs once after 60 seconds
+    }, 60000); // Refresh every 60 seconds
 }
 
 function searchLocation() {
     const query = document.getElementById("location-input").value.trim();
 
     if (!query) {
-        alert("❌ Please enter a location or postal code.");
+        alert("❌ Please enter a location or gym name.");
         return;
     }
 
@@ -127,87 +116,19 @@ function searchLocation() {
         fields: ["name", "geometry", "formatted_address"],
     };
 
+    service = new google.maps.places.PlacesService(map);
     service.textSearch(request, (results, status) => {
         if (status === google.maps.places.PlacesServiceStatus.OK && results.length > 0) {
             const location = results[0].geometry.location;
             map.setCenter(location);
-            map.setZoom(14); // 🔍 Zoom into the searched location
-            console.log("✅ Found location:", results[0].formatted_address);
+            map.setZoom(14); // Zoom in to show the searched area
 
-            // ✅ Clear ONLY the gym list (DO NOT clear markers)
-            clearGymList();
+            results.forEach((place) => createMarker(place)); // Mark all found gyms
+            console.log("✅ Found location:", results[0]);
 
-            updateNearbyGyms(location);
         } else {
-            alert("❌ Location not found. Try again.");
+            alert("❌ Location or gym not found. Try again.");
         }
-    });
-}
-
-function updateNearbyGyms(location) {
-    console.log("📍 Updating Nearby Gyms List...");
-
-    // ✅ Ensure `service` is initialized
-    if (!service) {
-        service = new google.maps.places.PlacesService(map);
-    }
-
-    const request = {
-        location: location,
-        radius: 5000, // Search within 5km
-        type: "gym",  // Ensures only gym locations are returned
-        fields: ["name", "geometry", "vicinity", "place_id"], // ✅ Request `place_id` for further details
-    };
-
-    service.nearbySearch(request, (results, status) => {
-        let gymList = document.getElementById("gym-list");
-        clearGymList(); // ✅ Clear previous gym list
-
-        if (status === google.maps.places.PlacesServiceStatus.OK) {
-            console.log(`✅ Found ${results.length} gyms nearby.`);
-
-            // ✅ Sort gyms by distance from searched location
-            results.sort((a, b) => {
-                const distA = google.maps.geometry.spherical.computeDistanceBetween(
-                    location,
-                    a.geometry.location
-                );
-                const distB = google.maps.geometry.spherical.computeDistanceBetween(
-                    location,
-                    b.geometry.location
-                );
-                return distA - distB;
-            });
-
-            results.forEach((place) => {
-                // ✅ Ensure we filter out unwanted locations before processing
-                if (!isUnwantedPlace(place.name)) {
-                    fetchGymDetails(place); // ✅ Fetch full details before adding to the list
-                    createMarker(place); // ✅ Add gym marker to the map
-                }
-            });
-        } else {
-            console.error("❌ No nearby gyms found.");
-            gymList.innerHTML = "<li>No nearby gyms found.</li>";
-        }
-    });
-}
-
-function fetchGymDetails(place) {
-    const request = {
-        placeId: place.place_id,
-        fields: ["name", "formatted_address", "vicinity", "geometry"],
-    };
-
-    service.getDetails(request, (details, status) => {
-        if (status === google.maps.places.PlacesServiceStatus.OK) {
-            place.formatted_address = details.formatted_address || place.vicinity;
-        } else {
-            place.formatted_address = place.vicinity || "No address available";
-        }
-        if (!isUnwantedPlace(place.name)) {
-            addGymToList(place);
-        } // ✅ Add gym to the list with the correct address
     });
 }
 
@@ -215,45 +136,14 @@ function addGymToList(place) {
     let gymList = document.getElementById("gym-list");
     
     let listItem = document.createElement("li");
-    listItem.innerHTML = `<strong>${place.name}</strong><br>
-                          ${place.formatted_address || "No address available"}`;
+    listItem.innerHTML = `<strong>${place.name}</strong><br>${place.formatted_address || "No address available"}`;
 
-    // ✅ Clicking a gym moves the map and opens its info window
     listItem.onclick = () => {
         map.setCenter(place.geometry.location);
-        map.setZoom(16);
-
-        // ✅ Open the info window for this gym
-        const infowindow = new google.maps.InfoWindow({
-            content: `<strong>${place.name}</strong><br>${place.formatted_address || "No address available"}`
-        });
-
-        infowindow.open(map);
+        map.setZoom(15);
     };
 
     gymList.appendChild(listItem);
-}
-
-function clearGymList() {
-    let gymList = document.getElementById("gym-list");
-    if (gymList) {
-        gymList.innerHTML = ""; // Clears the gym list
-    }
-}
-
-function isUnwantedPlace(name) {
-    const unwantedKeywords = [
-        "fitness corner",
-        "playground",
-        "basketball court",
-        "bike park",
-        "bicycle",
-        "stadium",
-        "home gym",
-        "outdoor gym"
-    ];
-
-    return unwantedKeywords.some(keyword => name.toLowerCase().includes(keyword));
 }
 
 window.onload = () => {
