@@ -11,15 +11,17 @@
     <!-- Persistent Top Bar -->
     <nav class="navbar">
         <div class="nav-left">
+            <% if (user) { %>
             <span class="menu-icon">☰</span>
+            <% } %>
             <h1 class="logo">ELEVATE</h1>
         </div>
     </nav>
 
+    <% if (user) { %>
     <!-- Sidebar Menu -->
     <div class="sidebar">
         <ul class="sidebar-menu">
-            <% if (user) { %>
                 <li><a href="/">Home</a></li>
                 <li><a href="/account">My Fitness</a></li>
                 <li><a href="/track-workout">Track Workout</a></li>
@@ -27,9 +29,10 @@
                 <li><a href="/weekly-challenge">Weekly Challenge</a></li>
                 <li><a href="/gymlocator">Gym Locator</a></li>
                 <li><a href="/logout">Logout</a></li>
-            <% } %>
+            
         </ul>
     </div>
+    <% } %>
 
     <!-- Main Challenge Container -->
     <div class="challenge-container">

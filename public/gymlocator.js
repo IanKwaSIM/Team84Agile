@@ -14,7 +14,7 @@ const singaporeRegions = [
 ];
 
 function initMap() {
-    console.log("🗺️ Initializing Google Maps...");
+    console.log(" Initializing Google Maps...");
 
     const singaporeLocation = { lat: 1.3521, lng: 103.8198 }; // Central Singapore
 
@@ -96,7 +96,7 @@ function createMarker(place) {
 // Function to refresh gym search every 60 seconds
 function autoRefreshGyms() {
     setInterval(() => {
-        console.log("Refreshing gym search...");
+        console.log(" Refreshing gym search...");
         searchAllRegions();
     }, 60000); // Refresh every 60 seconds
 }
