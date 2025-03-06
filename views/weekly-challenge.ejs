@@ -1,92 +1,109 @@
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Weekly Challenge</title>
-    <link rel="stylesheet" href="/styles.css">
+    <link rel="stylesheet" href="/styles.css" />
     <script defer src="/general.js"></script>
-</head>
-<body>
-
+  </head>
+  <body>
     <!-- Persistent Top Bar -->
     <nav class="navbar">
-        <div class="nav-left">
-            <% if (user) { %>
-            <span class="menu-icon">☰</span>
-            <% } %>
-            <h1 class="logo">ELEVATE</h1>
-        </div>
+      <div class="nav-left">
+        <% if (user) { %>
+        <span class="menu-icon">☰</span>
+        <% } %>
+        <a href="/" class="logo">ELEVATE</a>
+      </div>
+      <!-- Login / Logout button on nav bar -->
+      <div class="nav-right">
+        <% if (user) { %>
+        <button id="logout-btn" class="login-btn">Logout</button>
+        <% } else { %>
+        <button id="login-btn" class="login-btn">Login</button>
+        <% } %>
+      </div>
     </nav>
 
     <% if (user) { %>
     <!-- Sidebar Menu -->
     <div class="sidebar">
-        <ul class="sidebar-menu">
-                <li><a href="/">Home</a></li>
-                <li><a href="/account">My Fitness</a></li>
-                <li><a href="/track-workout">Track Workout</a></li>
-                <li><a href="/socials">Social</a></li>
-                <li><a href="/weekly-challenge">Weekly Challenge</a></li>
-                <li><a href="/gymlocator">Gym Locator</a></li>
-                <li><a href="/logout">Logout</a></li>
-            
-        </ul>
+      <ul class="sidebar-menu">
+        <li><a href="/">Home</a></li>
+        <li><a href="/account">My Fitness</a></li>
+        <li><a href="/track-workout">Track Workout</a></li>
+        <li><a href="/socials">Social</a></li>
+        <li><a href="/weekly-challenge">Weekly Challenge</a></li>
+        <li><a href="/gymlocator">Gym Locator</a></li>
+      </ul>
     </div>
     <% } %>
 
     <!-- Main Challenge Container -->
     <div class="challenge-container">
-        <h1>Weekly Challenge</h1>
+      <h1>Weekly Challenge</h1>
 
-        <!-- Current Challenge Display -->
-        <div class="current-challenge">
-            <h2>Challenge: <span id="challengeExercise"><%= challenge ? challenge.exercise_name : 'No Active Challenge' %></span></h2>
-            <p><strong>Start Date:</strong> <%= challenge ? challenge.start_date : '-' %></p>
-            <p><strong>End Date:</strong> <%= challenge ? challenge.end_date : '-' %></p>
-            <p id="challengeCriteria"> Challenge Criteria: Most Weight Lifted / Reps</p>
-        </div>
+      <!-- Current Challenge Display -->
+      <div class="current-challenge">
+        <h2>
+          Challenge:
+          <span id="challengeExercise"
+            ><%= challenge ? challenge.exercise_name : 'No Active Challenge'
+            %></span
+          >
+        </h2>
+        <p>
+          <strong>Start Date:</strong> <%= challenge ? challenge.start_date :
+          '-' %>
+        </p>
+        <p>
+          <strong>End Date:</strong> <%= challenge ? challenge.end_date : '-' %>
+        </p>
+        <p id="challengeCriteria">
+          Challenge Criteria: Most Weight Lifted / Reps
+        </p>
+      </div>
 
-        <!-- User Progress -->
-        <div class="user-progress">
-            <h3>Your Progress</h3>
-            <p id="userParticipation">
-                <% if (userChallenge) { %>
-                    You have participated in this challenge!
-                <% } else { %>
-                    You haven't logged this exercise yet.
-                <% } %>
-            </p>
-            <p><strong>Your Best Performance:</strong> 
-                <%= userChallenge ? `${userChallenge.weight} kg x ${userChallenge.reps} reps` : 'N/A' %>
-            </p>
-        </div>
+      <!-- User Progress -->
+      <div class="user-progress">
+        <h3>Your Progress</h3>
+        <p id="userParticipation">
+          <% if (userChallenge) { %> You have participated in this challenge! <%
+          } else { %> You haven't logged this exercise yet. <% } %>
+        </p>
+        <p>
+          <strong>Your Best Performance:</strong>
+          <%= userChallenge ? `${userChallenge.weight} kg x
+          ${userChallenge.reps} reps` : 'N/A' %>
+        </p>
+      </div>
 
-        <!-- Leaderboard -->
-        <div class="leaderboard">
-            <h3>Leaderboard</h3>
-            <table>
-                <thead>
-                    <tr>
-                        <th>Rank</th>
-                        <th>Username</th>
-                        <th>Performance</th>
-                    </tr>
-                </thead>
-                <tbody id="leaderboard">
-                    <% if (leaderboard.length === 0) { %>
-                        <tr><td colspan="3">No participants yet!</td></tr>
-                    <% } else { %>
-                        <% leaderboard.forEach((user, index) => { %>
-                            <tr>
-                                <td><%= index + 1 %></td>
-                                <td><%= user.username %></td>
-                                <td><%= user.weight %> kg x <%= user.reps %> reps</td>
-                            </tr>
-                        <% }); %>
-                    <% } %>
-                </tbody>
-            </table>
-        </div>
+      <!-- Leaderboard -->
+      <div class="leaderboard">
+        <h3>Leaderboard</h3>
+        <table>
+          <thead>
+            <tr>
+              <th>Rank</th>
+              <th>Username</th>
+              <th>Performance</th>
+            </tr>
+          </thead>
+          <tbody id="leaderboard">
+            <% if (leaderboard.length === 0) { %>
+            <tr>
+              <td colspan="3">No participants yet!</td>
+            </tr>
+            <% } else { %> <% leaderboard.forEach((user, index) => { %>
+            <tr>
+              <td><%= index + 1 %></td>
+              <td><%= user.username %></td>
+              <td><%= user.weight %> kg x <%= user.reps %> reps</td>
+            </tr>
+            <% }); %> <% } %>
+          </tbody>
+        </table>
+      </div>
     </div>
-</body>
+  </body>
 </html>

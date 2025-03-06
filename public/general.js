@@ -53,4 +53,13 @@ document.addEventListener("DOMContentLoaded", function () {
             loginForm.style.display = "none";
         });
     }
+
+    // **Logout Button Event Listener** (for all the pages)
+    const logoutBtn = document.getElementById('logout-btn');
+    if (logoutBtn) {
+        logoutBtn.addEventListener('click', function () {
+            // Redirect to the logout route
+            window.location.href = '/logout';
+        });
+    }
 });

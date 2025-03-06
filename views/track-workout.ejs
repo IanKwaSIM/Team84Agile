@@ -9,29 +9,28 @@
     <script defer src="/track-workout.js"></script>
 </head>
 <body>
-
-    <!-- Persistent Top Bar -->
-    <nav class="navbar">
-        <div class="nav-left">
-            <% if (user) { %>
-            <span class="menu-icon">☰</span>
-            <% } %>
-            <h1 class="logo">ELEVATE</h1>
-        </div>
-    </nav>
+<!-- Persistent Top Bar -->
+<nav class="navbar">
+    <div class="nav-left">
+      <span class="menu-icon">☰</span>
+      <a href="/" class="logo">ELEVATE</a>
+    </div>
+    <!-- Login / Logout button on nav bar -->
+    <div class="nav-right">
+      <button id="logout-btn" class="login-btn">Logout</button>
+    </div>
+  </nav>
 
     <% if (user) { %>
     <!-- Sidebar Menu -->
     <div class="sidebar">
         <ul class="sidebar-menu">
-                <li><a href="/">Home</a></li>
-                <li><a href="/account">My Fitness</a></li>
-                <li><a href="/track-workout">Track Workout</a></li>
-                <li><a href="/socials">Social</a></li>
-                <li><a href="/weekly-challenge">Weekly Challenge</a></li>
-                <li><a href="/gymlocator">Gym Locator</a></li>
-                <li><a href="/logout">Logout</a></li>
-            
+            <li><a href="/">Home</a></li>
+            <li><a href="/account">My Fitness</a></li>
+            <li><a href="/track-workout">Track Workout</a></li>
+            <li><a href="/socials">Social</a></li>
+            <li><a href="/weekly-challenge">Weekly Challenge</a></li>
+            <li><a href="/gymlocator">Gym Locator</a></li>
         </ul>
     </div>
     <% } %>

@@ -21,4 +21,21 @@ document.addEventListener("DOMContentLoaded", function () {
             toggleToLogin.style.display = "none"; // Hide "Already have an account?" link
         });
     }
+    
+    const loginBtn = document.getElementById('login-btn');
+    const logoutBtn = document.getElementById('logout-btn');
+    const authContainer = document.getElementById('auth-container');
+
+    if (loginBtn) {
+        loginBtn.addEventListener('click', function () {
+            authContainer.style.display = 'block';
+        });
+    }
+
+    if (logoutBtn) {
+        logoutBtn.addEventListener('click', function () {
+            // Redirect to the logout route
+            window.location.href = '/logout';
+        });
+    }
 });
