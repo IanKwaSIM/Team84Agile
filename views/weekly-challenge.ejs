@@ -41,68 +41,70 @@
 
     <!-- Main Challenge Container -->
     <div class="challenge-container">
-      <h1>Weekly Challenge</h1>
+      <h1 class="challenge-title">Weekly Challenge</h1>
 
-      <!-- Current Challenge Display -->
-      <div class="current-challenge">
-        <h2>
-          Challenge:
-          <span id="challengeExercise"
-            ><%= challenge ? challenge.exercise_name : 'No Active Challenge'
-            %></span
-          >
-        </h2>
-        <p>
-          <strong>Start Date:</strong> <%= challenge ? challenge.start_date :
-          '-' %>
-        </p>
-        <p>
-          <strong>End Date:</strong> <%= challenge ? challenge.end_date : '-' %>
-        </p>
-        <p id="challengeCriteria">
-          Challenge Criteria: Most Weight Lifted / Reps
-        </p>
-      </div>
+      <!-- Challenge Sections: 3-Column Layout -->
+      <div class="challenge-sections">
+        <!-- Weekly Challenge Box -->
+        <div class="challenge-box">
+          <h2>Challenge</h2>
+          <p>
+            <strong>Exercise:</strong>
+            <span id="challengeExercise"
+              ><%= challenge ? challenge.exercise_name : 'No Active Challenge'
+              %></span
+            >
+          </p>
+          <p>
+            <strong>Start Date:</strong> <%= challenge ? challenge.start_date :
+            '-' %>
+          </p>
+          <p>
+            <strong>End Date:</strong> <%= challenge ? challenge.end_date : '-'
+            %>
+          </p>
+          <p><strong>Criteria:</strong> Most Weight Lifted / Reps</p>
+        </div>
 
-      <!-- User Progress -->
-      <div class="user-progress">
-        <h3>Your Progress</h3>
-        <p id="userParticipation">
-          <% if (userChallenge) { %> You have participated in this challenge! <%
-          } else { %> You haven't logged this exercise yet. <% } %>
-        </p>
-        <p>
-          <strong>Your Best Performance:</strong>
-          <%= userChallenge ? `${userChallenge.weight} kg x
-          ${userChallenge.reps} reps` : 'N/A' %>
-        </p>
-      </div>
+        <!-- User Progress Box -->
+        <div class="challenge-box">
+          <h2>Progress</h2>
+          <p id="userParticipation">
+            <% if (userChallenge) { %> You have participated in this challenge!
+            <% } else { %> You haven't logged this exercise yet. <% } %>
+          </p>
+          <p>
+            <strong>Your Best Performance:</strong> <%= userChallenge ?
+            `${userChallenge.weight} kg x ${userChallenge.reps} reps` : 'N/A' %>
+          </p>
+        </div>
 
-      <!-- Leaderboard -->
-      <div class="leaderboard">
-        <h3>Leaderboard</h3>
-        <table>
-          <thead>
-            <tr>
-              <th>Rank</th>
-              <th>Username</th>
-              <th>Performance</th>
-            </tr>
-          </thead>
-          <tbody id="leaderboard">
-            <% if (leaderboard.length === 0) { %>
-            <tr>
-              <td colspan="3">No participants yet!</td>
-            </tr>
-            <% } else { %> <% leaderboard.forEach((user, index) => { %>
-            <tr>
-              <td><%= index + 1 %></td>
-              <td><%= user.username %></td>
-              <td><%= user.weight %> kg x <%= user.reps %> reps</td>
-            </tr>
-            <% }); %> <% } %>
-          </tbody>
-        </table>
+        <!-- Leaderboard Box -->
+        <div class="challenge-box leaderboard">
+          <h2>Leaderboard</h2>
+          <table>
+            <thead>
+              <tr>
+                <th>Rank</th>
+                <th>Username</th>
+                <th>Performance</th>
+              </tr>
+            </thead>
+            <tbody id="leaderboard">
+              <% if (leaderboard.length === 0) { %>
+              <tr>
+                <td colspan="3">No participants yet!</td>
+              </tr>
+              <% } else { %> <% leaderboard.forEach((user, index) => { %>
+              <tr>
+                <td><%= index + 1 %></td>
+                <td><%= user.username %></td>
+                <td><%= user.weight %> kg x <%= user.reps %> reps</td>
+              </tr>
+              <% }); %> <% } %>
+            </tbody>
+          </table>
+        </div>
       </div>
     </div>
   </body>

@@ -47,6 +47,28 @@ body::before {
     align-items: center;
 }
 
+/* login button */
+.nav-right {
+    display: flex;
+    align-items: center;
+}
+.login-btn {
+    padding: 10px 20px;
+    background-color: #ffffff;
+    color: rgb(0, 0, 0);
+    border: none;
+    cursor: pointer;
+    border-radius: 5px;
+    margin-right: 50px;
+    font-size: large;
+    font-weight: bold;
+}
+
+.login-btn:hover {
+    background-color: #c9c9c9;
+}
+/* login button end */
+
 /* ✅ Hamburger Menu Icon */
 .menu-icon {
     font-size: 40px;
@@ -368,6 +390,28 @@ body::before {
         font-size: 1.2rem;
         padding: 10px;
     }
+
+    .intro-text {
+        font-size: 1.5rem;
+        padding: 10px;
+    }
+
+    .profile-container {
+        grid-template-columns: 1fr; /* Switch to a single column */
+        max-width: 90vw;
+    }
+
+    .profile-grid {
+        grid-template-columns: 1fr; /* Single column layout */
+    }
+
+    .phone-input {
+        flex-direction: column; /* Stack phone number inputs */
+    }
+
+    .update-btn {
+        grid-column: span 1; /* Ensures the button remains aligned */
+    }
 }
 
 /* yz changes */
@@ -423,12 +467,13 @@ body::before {
 }
 
 .intro-text {
-    text-align: center;
-    margin: 35px auto;
-    max-width: 800px;
-    font-size: 1.5rem;
+    position: absolute;
+    top: 25%; /* Adjust this value to position the text vertically */
+    left: 50%;
+    transform: translate(-50%, -50%); /* Center the text horizontally and vertically */
+
     font-weight: bold;
-    color:#fcfcfc;
+    color: #fcfcfc;
 }
 
 /* Centering .intro-text2 */
@@ -445,21 +490,78 @@ body::before {
 /* for login/home page end */
 
 /* for accounts page */
+.account-page {
+    background-color: grey;
+    background-image: none;
+}
+
+/* ✅ General Form Styling */
 .profile-container {
     display: grid;
-    grid-template-columns: 1fr 1fr; /* Two equal columns */
-    gap: 20px; /* Space between columns */
-    max-width: 900px;
+    grid-template-columns: 2fr 1fr; /* Two columns */
+    gap: 10%; /* Space between profile and past workouts */
+    max-width: 70vw;
     margin: 100px auto 0 auto;
 }
 
-/* Each column */
-.profile-column {
-    display: flex;
-    flex-direction: column;
+/* ✅ Form Layout: Two Equal Columns */
+.profile-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr; /* Two equal columns */
+    gap: 5%; /* Space between columns */
+    width: 100%;
 }
 
-/* Style for labels */
+/* ✅ Ensure Inputs and Selects are the Same Width */
+.profile-column input,
+.profile-column select {
+    width: 100% !important; /* Ensure all inputs and selects take full width */
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 1rem;
+    box-sizing: border-box; /* Prevents unwanted width overflow */
+}
+
+/* ✅ Fix Phone Number Alignment */
+.phone-input {
+    display: flex;
+    gap: 5px; /* Space between select and input */
+    align-items: center;
+    width: 100%;
+}
+
+.phone-input select {
+    flex: 1; /* Dropdown takes equal space */
+    min-width: 90px; /* Prevents it from shrinking too much */
+}
+
+.phone-input input {
+    flex: 2; /* Ensure phone input takes more space */
+    width: 100%; /* Make sure it doesn't shrink */
+}
+
+/* ✅ Align Height, Weight, and BMI in a Single Row */
+.height-weight-input {
+    display: flex;
+    justify-content: space-between; /* Ensure equal spacing */
+    gap: 10px;
+    width: 100%;
+}
+
+.height-weight-input div {
+    flex: 1; /* Ensure equal width */
+}
+
+.height-weight-input input {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    text-align: center; /* Centers BMI text */
+}
+
+/* ✅ Style for Labels */
 label {
     display: block;
     margin-top: 10px;
@@ -467,7 +569,7 @@ label {
     text-align: left;
 }
 
-/* Style for inputs and selects */
+/* ✅ Style for Inputs and Selects */
 input, select {
     width: 100%;
     padding: 8px;
@@ -475,70 +577,81 @@ input, select {
     border: 1px solid #ccc;
     border-radius: 5px;
 }
+
+/* ✅ Style for Update Profile Button */
+.update-btn {
+    grid-column: span 2;
+    padding: 12px;
+    background-color: rgb(0, 0, 0);
+    color: white;
+    border: none;
+    border-radius: 5px;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background 0.3s;
+    text-align: center;
+    width: 100%;
+}
+
+.update-btn:hover {
+    background-color: white;
+    color: black;
+}
 /* for accounts page end */
 
 /* for challenge page */
+/* ✅ Main Challenge Container */
 .challenge-container {
     display: flex;
-    justify-content: center;
-    align-items: center;
+    flex-direction: column;
+    align-items: center; /* Centers title */
     max-width: 1000px;
-    margin: 50px auto;
-    margin-top: 100px;
-}
-
-.challenge-section {
-    flex: 1;
-    background: white;
-    padding: 20px;
-    border-radius: 10px;
-    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
-    text-align: center;
-    margin-right: 20px;
-}
-
-.leaderboard {
-    width: 250px;
-    background: white;
-    padding: 20px;
-    border-radius: 10px;
-    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
-    margin-top: 100px;
-}
-
-.leaderboard h2 {
+    margin: 100px auto 0 auto;
     text-align: center;
 }
 
-#leaderboard-list {
-    list-style: none;
-    padding: 0;
-}
-
-#leaderboard-list li {
-    background: #e3e3e3;
-    margin: 5px 0;
-    padding: 10px;
-    border-radius: 5px;
-}
-
-/* login button */
-.nav-right {
-    display: flex;
-    align-items: center;
-}
-.login-btn {
-    padding: 10px 20px;
-    background-color: #ffffff;
-    color: rgb(0, 0, 0);
-    border: none;
-    cursor: pointer;
-    border-radius: 5px;
-    margin-right: 50px;
-    font-size: large;
+.challenge-title {
+    font-size: 3.5rem;
     font-weight: bold;
+    color: white;
 }
 
-.login-btn:hover {
-    background-color: #c9c9c9;
+/* ✅ Weekly Challenge Sections */
+.challenge-sections {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr); /* 3 equal columns */
+    gap: 20px;
+    width: 100%;
+    max-width: 1000px;
+    margin-top: 20px;
 }
+
+/* ✅ Individual Challenge Boxes */
+.challenge-box {
+    background: rgba(255, 255, 255, 0.9);
+    padding: 15px;
+    border-radius: 10px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    text-align: center;
+}
+
+/* ✅ Leaderboard Table */
+.leaderboard table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.leaderboard th,
+.leaderboard td {
+    padding: 8px;
+    border-bottom: 1px solid #ddd;
+}
+
+/* ✅ Responsive: Stack into 1 column on small screens */
+@media (max-width: 900px) {
+    .challenge-sections {
+        grid-template-columns: 1fr; /* Single-column layout */
+    }
+}
+/* for challenge page end */
+
