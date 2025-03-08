@@ -55,14 +55,14 @@
         <div class="social-section">
           <h2>Search Users</h2>
           <form id="searchUserForm">
-            <input type="text" id="searchUser" placeholder="Enter username" />
-            <button type="submit">Search</button>
+            <input type="text" id="searchUser" placeholder="Enter username" class="social-input" />
+            <button type="submit" class="social-btn">Search</button>
           </form>
           <div id="searchResults"></div>
         </div>
 
         <div class="nearby-section">
-          <h2>Find Users</h2>
+          <h2>Find Users</h2> <!-- Removed cause it doesnt do anything-->
           <h3>Nearby Users</h3>
           <div id="nearbyUsersList"></div>
           <h3>Similar Goals</h3>
@@ -129,12 +129,14 @@
               id="groupName"
               placeholder="Enter group name"
               oninput="toggleCreateButton()"
+              class="social-input"
             />
             <button
               type="button"
               id="createGroupBtn"
               onclick="createGroup()"
               disabled
+              class="social-btn"
             >
               Create Group
             </button>

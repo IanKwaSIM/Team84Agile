@@ -41,7 +41,7 @@ async function loadFriends() {
             friendList.innerHTML = friends.map(friend => `
                 <div>
                     <p><strong>${friend.username}</strong></p>
-                    <button onclick="openChat('${friend.username}', ${friend.user_id}, 'private')">Chat</button>
+                    <button class="social-btn" onclick="openChat('${friend.username}', ${friend.user_id}, 'private')">Chat</button>
                 </div>
             `).join("");
         })
@@ -85,7 +85,7 @@ function searchUsers() {
                     ${
                         user.friendship_status === "friend"
                         ? `<span class="friend-status">✔️ Already Friends</span>`
-                        : `<button onclick="sendFriendRequest(${user.user_id})">Add Friend</button>`
+                        : `<button class="social-btn" onclick="sendFriendRequest(${user.user_id})">Add Friend</button>`
                     }
                 </div>
             `).join("");
@@ -115,7 +115,7 @@ function findNearbyUsers() {
                 <div>
                     <p>${user.username} - ${user.city}, ${user.country} <br> 
                     <small>${user.distance.toFixed(2)} km away</small></p>
-                    <button onclick="sendFriendRequest(${user.user_id})">Add Friend</button>
+                    <button class="social-btn" onclick="sendFriendRequest(${user.user_id})">Add Friend</button>
                 </div>
             `).join("");
         })
@@ -140,7 +140,7 @@ function findSimilarGoals() {
                 .map(user => `
                     <div>
                         <p>${user.username} - ${user.goals}</p>
-                        <button onclick="sendFriendRequest(${user.user_id})" data-userid="${user.user_id}">
+                        <button class="social-btn" onclick="sendFriendRequest(${user.user_id})" data-userid="${user.user_id}">
                             Add Friend
                         </button>
                     </div>
@@ -209,8 +209,8 @@ function loadFriendRequests() {
                 <div class="friend-request">
                     <p>${request.username} wants to be your friend</p>
                     <div class="friend-request-buttons">
-                        <button class="accept-friend" onclick="respondFriendRequest(${request.user_id}, 'accept')">Accept</button>
-                        <button class="reject-friend" onclick="respondFriendRequest(${request.user_id}, 'reject')">Reject</button>
+                        <button class="social-btn" onclick="respondFriendRequest(${request.user_id}, 'accept')">Accept</button>
+                        <button class="social-btn" onclick="respondFriendRequest(${request.user_id}, 'reject')">Reject</button>
                     </div>
                 </div>
             `).join("");
@@ -235,7 +235,7 @@ function loadFriendRequests() {
                 groupList.innerHTML = groups.map(group => `
                     <div>
                         <p><strong>${group.group_name}</strong> (Led by ${group.leader_name})</p>
-                        <button onclick="joinGroup(${group.group_id})">Join Group</button>
+                        <button class="social-btn" onclick="joinGroup(${group.group_id})">Join Group</button>
                     </div>
                 `).join("");
             })
@@ -281,7 +281,7 @@ function loadFriendRequests() {
                 groupList.innerHTML = groups.map(group => `
                     <div>
                         <p><strong>${group.group_name}</strong> (Led by ${group.leader_name})</p>
-                        <button onclick="joinGroup(${group.group_id})">Join Group</button>
+                        <button class="social-btn" onclick="joinGroup(${group.group_id})">Join Group</button>
                     </div>
                 `).join("");
             })
@@ -317,8 +317,8 @@ function loadFriendRequests() {
                         <!-- 🔹 Button Container (Side by Side Buttons) -->
                         <div class="chat-action-container">
                             ${group.created_by == currentUserId ? 
-                            `<button class="delete-chat-btn" onclick="deleteGroup(${group.group_id})">Delete Group</button>` : ""}
-                            <button class="open-chat-btn" onclick="openChat('${group.group_name}', ${group.group_id}, 'group')">Chat</button>
+                            `<button class="social-btn" onclick="deleteGroup(${group.group_id})">Delete Group</button>` : ""}
+                            <button class="social-btn" onclick="openChat('${group.group_name}', ${group.group_id}, 'group')">Chat</button>
                         </div>
                     </div>
                 `).join("");
