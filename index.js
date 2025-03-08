@@ -95,9 +95,30 @@ function scheduleWeeklyChallenge() {
 
 
 // Home Page
+// app.get("/", (req, res) => {
+//     const user = req.session.user || null;
+//     res.render("index", { user });
+// });
+
 app.get("/", (req, res) => {
-    const user = req.session.user || null;
-    res.render("index", { user });
+    if (!req.session.user) {
+        return res.render("index", { user: null, pendingRequests: 0 });
+    }
+
+    const userId = req.session.user.user_id;
+
+    db.get(
+        "SELECT COUNT(*) AS count FROM friends WHERE friend_id = ? AND status = 'pending'",
+        [userId],
+        (err, row) => {
+            if (err) {
+                console.error("Error fetching friend requests:", err);
+                return res.render("index", { user: req.session.user, pendingRequests: 0 });
+            }
+            const pendingRequests = row ? row.count : 0;
+            res.render("index", { user: req.session.user, pendingRequests });
+        }
+    );
 });
 
 //  Register Route (Hashes password before saving)

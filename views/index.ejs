@@ -14,7 +14,7 @@
     <nav class="navbar">
       <div class="nav-left">
         <span class="menu-icon">☰</span>
-        <a href="/" class="logo">ELEVATE</a>
+        <a href="/" class="logo">ELEVATE<img src="/images/photo_2025-03-07_23-45-15.jpg" alt="Logo" class="logo-img"></a>
       </div>
       <!-- Login / Logout button on nav bar -->
       <div class="nav-right">
@@ -44,6 +44,10 @@
       <% if (user) { %>
       <div class="intro-text2">
             <h1>Welcome, <%= user.username %>!</h1>
+      <% if (typeof pendingRequests !== 'undefined' && pendingRequests > 0) { %>
+        <p>You have <%= pendingRequests %> pending friend request<%= pendingRequests > 1 ? 's' : '' %>. 
+        <a href="/socials">View</a></p>
+      <% } %>
       </div>
       <% } else { %>
       <div class="intro-text">

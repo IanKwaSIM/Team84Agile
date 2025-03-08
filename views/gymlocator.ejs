@@ -16,7 +16,7 @@
             <% if (user) { %>
             <span class="menu-icon">☰</span>
             <% } %>
-            <a href="/" class="logo">ELEVATE</a>
+            <a href="/" class="logo">ELEVATE<img src="/images/photo_2025-03-07_23-45-15.jpg" alt="Logo" class="logo-img"></a>
         </div>
         <!-- Login / Logout button on nav bar -->
       <div class="nav-right">
@@ -42,16 +42,25 @@
     </div>
     <% } %>
     
-    <div class="container">
+    <div class="gymlocator-container">
         <h2>Find a Gym Near You</h2>
-        <input type="text" id="location-input" placeholder="Enter a location">
-        <button onclick="searchLocation()">Search</button>
+    
+        <!-- Search Bar -->
+        <div class="location-search">
+            <input type="text" id="location-input" placeholder="Enter a location">
+            <button onclick="searchLocation()">Search</button>
+        </div>
+    
+        <!-- Google Maps Display -->
         <div id="map"></div>
-
-        <!-- New: Gym List Section -->
-        <h3>Nearby Gyms</h3>
-        <ul id="gym-list"></ul>
+    
+        <!-- Gym List Section -->
+        <h2>Nearby Gyms</h2>
+        <ul id="gym-list" class="gym-list">
+            <!-- Gym results will be dynamically inserted here -->
+        </ul>
     </div>
+    
 
     <script>
         function initAutocomplete() {

@@ -15,7 +15,7 @@
         <% if (user) { %>
         <span class="menu-icon">☰</span>
         <% } %>
-        <a href="/" class="logo">ELEVATE</a>
+        <a href="/" class="logo">ELEVATE<img src="/images/photo_2025-03-07_23-45-15.jpg" alt="Logo" class="logo-img"></a>
       </div>
       <!-- Login / Logout button on nav bar -->
       <div class="nav-right">
@@ -62,7 +62,6 @@
         </div>
 
         <div class="nearby-section">
-          <h2>Find Users</h2> <!-- Removed cause it doesnt do anything-->
           <h3>Nearby Users</h3>
           <div id="nearbyUsersList"></div>
           <h3>Similar Goals</h3>
@@ -101,10 +100,10 @@
         <div class="group-section">
           <h2>Groups</h2>
           <div class="group-tab-container">
-            <button onclick="switchGroupTab('available')">
+            <button class="social-btn" onclick="switchGroupTab('available')">
               Available Groups
             </button>
-            <button onclick="switchGroupTab('my')">My Groups</button>
+            <button class="social-btn" onclick="switchGroupTab('my')">My Groups</button>
           </div>
 
           <div id="availableGroupsSection">
