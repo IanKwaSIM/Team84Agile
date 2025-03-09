@@ -203,41 +203,47 @@ body::before {
 }
 
 /* ✅ Calendar Styles */
+/* ✅ Fix Calendar Grid Layout */
 #calendar {
     display: grid;
-    grid-template-columns: repeat(7, 1fr);
+    grid-template-columns: repeat(7, 1fr); /* 7 columns for 7 days of the week */
     gap: 5px;
     padding: 10px;
+    max-width: 100%; /* Ensures it doesn't overflow */
+    justify-content: center;
 }
 
-/* ✅ Calendar Days */
+/* ✅ Ensure Days Fit Properly */
 .calendar-day {
-    display: inline-block;
-    width: 40px;
-    height: 40px;
-    line-height: 40px;
-    text-align: center;
-    margin: 2px;
-    cursor: pointer;
-    border-radius: 5px;
+    width: 100%; /* Adjusts automatically based on grid */
+    height: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1rem;
     background: #f0f0f0;
-    transition: background 0.3s, color 0.3s;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background 0.3s;
 }
 
-.calendar-day:hover {
-    background: #d4d4d4;
+/* ✅ Prevent Extra Elements from Breaking the Layout */
+.calendar-day span {
+    display: block;
+    width: 100%;
+    text-align: center;
 }
 
-/* ✅ Highlight Logged Workouts */
-.workout-day {
-    background: #ff9800 !important; /* Orange color for logged workouts */
+/* ✅ Ensure Selected Date Stands Out */
+.calendar-day.selected {
+    background: #555;
     color: white;
     font-weight: bold;
 }
 
-/* ✅ Highlight Selected Date */
-.calendar-day.selected {
-    background: #555;
+/* ✅ Highlight Logged Workouts */
+.workout-day {
+    background: #ff9800 !important;
     color: white;
     font-weight: bold;
 }
