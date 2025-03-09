@@ -38,4 +38,34 @@ document.addEventListener("DOMContentLoaded", function () {
             window.location.href = '/logout';
         });
     }
+    
+    if (loginForm) {
+        loginForm.addEventListener("submit", async function (event) {
+            event.preventDefault(); // Prevent default form submission
+
+            const email = document.getElementById("email").value;
+            const password = document.getElementById("password").value;
+
+            try {
+                const response = await fetch("/login", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ email, password }),
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    // Redirect silently without showing a popup
+                    window.location.href = data.redirect;
+                } else {
+                    // Show an error popup for failed login
+                    alert(data.message);
+                }
+            } catch (error) {
+                console.error("Error:", error);
+                alert("An unexpected error occurred. Please try again.");
+            }
+        });
+    }
 });

@@ -152,29 +152,29 @@ app.post("/register", (req, res) => {
     });
 });
 
-//  Login Route 
+// Login Route
 app.post("/login", (req, res) => {
     const { email, password } = req.body;
 
     db.get("SELECT * FROM users WHERE email = ?", [email], (err, user) => {
         if (err) {
-            console.error(" Database error:", err);
-            return res.redirect("/");
+            console.error("Database error:", err);
+            return res.json({ success: false, message: "Database error. Please try again." });
         }
 
         if (!user) {
-            console.log(" Invalid login attempt (User not found):", email);
-            return res.redirect("/?error=Invalid credentials");
+            console.log("Invalid login attempt (User not found):", email);
+            return res.json({ success: false, message: "Invalid credentials. User not found." });
         }
 
         bcrypt.compare(password, user.password_hash, (err, result) => {
             if (result) {
                 req.session.user = { user_id: user.user_id, username: user.username, email: user.email };
-                console.log(` User logged in: ${user.username} (User ID: ${user.user_id})`);
-                res.redirect("/");
+                console.log(`User logged in: ${user.username} (User ID: ${user.user_id})`);
+                res.json({ success: true, message: "Login successful!", redirect: "/" });
             } else {
-                console.log(" Invalid login attempt (Wrong password):", email);
-                res.redirect("/?error=Invalid credentials");
+                console.log("Invalid login attempt (Wrong password):", email);
+                res.json({ success: false, message: "Invalid credentials. Incorrect password." });
             }
         });
     });
