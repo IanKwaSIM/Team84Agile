@@ -641,7 +641,7 @@ app.get("/socials/nearby-users", isAuthenticated, async (req, res) => {
                         username: u.username,
                         city: u.city,
                         country: u.country,
-                        distance: distances[index].distance ? distances[index].distance.value / 1000 : null, // Convert meters to km
+                        distance: (distances[index] && distances[index].distance) ? distances[index].distance.value / 1000 : 9999, // Default to 9999 km if distance is not available
                     }))
                     .filter(u => u.distance !== null && u.distance <= 20) // Keep users within 20km
                     .sort((a, b) => a.distance - b.distance); // Sort nearest first
